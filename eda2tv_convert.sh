@@ -46,6 +46,11 @@ if [[ -n "$9" && "$9" != "-" ]]; then
    convert_options="$9"
 fi
 
+movie_png_rate=1 # every fits file is converted to png and movie
+if [[ -n "${10}" && "${10}" != "-" ]]; then
+   movie_png_rate=${10}
+fi
+
 
 # temporary :
 export PATH=./:$PATH
@@ -207,8 +212,10 @@ if [[ $n_new_processed -gt 0 ]]; then
    i=0
    for png in `ls ../chan*png`; 
    do      
-      i_str=`echo $i | awk '{printf("%05d\n",$1);}'`;    
-      ln -s ${png} chan_${freq_ch}_XX_${i_str}.png; 
+      if [[ $(($i % $movie_png_rate)) == 0 ]];
+         i_str=`echo $i | awk '{printf("%06d\n",$1);}'`;    
+         ln -s ${png} chan_${freq_ch}_XX_${i_str}.png; 
+      fi
       i=$(($i+1));
    done      
 
@@ -216,8 +223,8 @@ if [[ $n_new_processed -gt 0 ]]; then
    #      mencoder mf://*.png -mf w=800:h=600:fps=10:type=png -ovc lavc -lavcopts vcodec=mpeg4:mbd=2:trell -oac copy -o 20200226_eda2.avi      
    echo "rm -f sky_last_24h.mp4"
    rm -f sky_last_24h.mp4
-   echo "ffmpeg -framerate 25 -i chan_${freq_ch}_XX_%5d.png -c:v libx264 -vf \"drawtext=fontfile=/usr/share/fonts/truetype/freefont/FreeSans.ttf:text=%{n}:x=(w-tw)/2:y=h-(2*lh): fontcolor=white:box=1:boxcolor=0x00000099\" -pix_fmt yuv420p sky_last_24h.mp4"
-   ffmpeg -framerate 25 -i chan_${freq_ch}_XX_%5d.png -c:v libx264 -vf "drawtext=fontfile=/usr/share/fonts/truetype/freefont/FreeSans.ttf:text=%{n}:x=(w-tw)/2:y=h-(2*lh): fontcolor=white:box=1:boxcolor=0x00000099" -pix_fmt yuv420p sky_last_24h.mp4
+   echo "ffmpeg -framerate 25 -i chan_${freq_ch}_XX_%6d.png -c:v libx264 -vf \"drawtext=fontfile=/usr/share/fonts/truetype/freefont/FreeSans.ttf:text=%{n}:x=(w-tw)/2:y=h-(2*lh): fontcolor=white:box=1:boxcolor=0x00000099\" -pix_fmt yuv420p sky_last_24h.mp4"
+   ffmpeg -framerate 25 -i chan_${freq_ch}_XX_%6d.png -c:v libx264 -vf "drawtext=fontfile=/usr/share/fonts/truetype/freefont/FreeSans.ttf:text=%{n}:x=(w-tw)/2:y=h-(2*lh): fontcolor=white:box=1:boxcolor=0x00000099" -pix_fmt yuv420p sky_last_24h.mp4
 
    echo $freq_ch > channel.txt
 

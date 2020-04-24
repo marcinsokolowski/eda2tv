@@ -48,6 +48,12 @@ if [[ -n "$9" && "$9" != "-" ]]; then
    convert_options="$9"
 fi
 
+movie_png_rate=1 # every fits file is converted to png and movie
+if [[ -n "${10}" && "${10}" != "-" ]]; then
+   movie_png_rate=${10}
+fi
+
+
 export PATH=~/Software/eda2tv/:$PATH
 
 mkdir -p merged/
@@ -74,7 +80,7 @@ do
    echo
    date
    
-   echo "eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} \"${convert_options}\""
-   eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} "${convert_options}"
+   echo "eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} \"${convert_options}\" ${movie_png_rate}"
+   eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} "${convert_options}" ${movie_png_rate} 
    sleep 30
 done
