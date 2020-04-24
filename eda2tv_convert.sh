@@ -51,6 +51,12 @@ if [[ -n "${10}" && "${10}" != "-" ]]; then
    movie_png_rate=${10}
 fi
 
+reprocess_all=0
+if [[ -n "${11}" && "${11}" != "-" ]]; then
+   reprocess_all=${11}
+fi
+
+
 
 # temporary :
 export PATH=./:$PATH
@@ -138,6 +144,22 @@ else
    fi
 fi 
 input_file=new_merged_hdf5_list.txt  
+
+if [[ $reprocess_all -gt 0 ]]; then
+   echo "INFO : requested to re-process all"
+   rm -f new_merged_hdf5_list.txt
+   
+   for hdf5file in `ls -tr ../*.hdf5`
+   do
+      echo "ln -s ${hdf5file}"
+      ln -s ${hdf5file}
+      
+      bname=`basename ${hdf5file}`
+
+      echo "echo $bname >> new_merged_hdf5_list.txt"
+      echo $bname >> new_merged_hdf5_list.txt
+   done   
+fi
 
 n_new_processed=0
 # hdf5_to_uvfits_all.sh -c -l -i 0.2831 -n 8140 -d "./" -N -z -f 126 -l -L new_hdf5_list.txt

@@ -53,6 +53,10 @@ if [[ -n "${10}" && "${10}" != "-" ]]; then
    movie_png_rate=${10}
 fi
 
+reprocess_all=0
+if [[ -n "${11}" && "${11}" != "-" ]]; then
+   reprocess_all=${11}
+fi
 
 export PATH=~/Software/eda2tv/:$PATH
 
@@ -80,7 +84,12 @@ do
    echo
    date
    
-   echo "eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} \"${convert_options}\" ${movie_png_rate}"
-   eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} "${convert_options}" ${movie_png_rate} 
+   echo "eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} \"${convert_options}\" ${movie_png_rate} ${reprocess_all}"
+   eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} "${convert_options}" ${movie_png_rate} ${reprocess_all}
+   
+   # only first iteration is requested to re-process old data (for example to re-run the pipeline off-line)
+   # then set flag to 0
+   reprocess_all=0
+   
    sleep 30
 done
