@@ -234,7 +234,7 @@ if [[ $n_new_processed -gt 0 ]]; then
    i=0
    for png in `ls ../chan*png`; 
    do      
-      if [[ $(($i % $movie_png_rate)) == 0 ]];
+      if [[ $(($i % $movie_png_rate)) == 0 ]]; then
          i_str=`echo $i | awk '{printf("%06d\n",$1);}'`;    
          ln -s ${png} chan_${freq_ch}_XX_${i_str}.png; 
       fi
