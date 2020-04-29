@@ -37,6 +37,16 @@ if [[ -n "$7" && "$7" != "-" ]]; then
 fi
 
 imsize=180 # 128 or 256 
+if [[ $freq_ch -gt 204 ]]; then
+   imsize=360
+else
+   if [[ $freq_ch -lt 141 ]]; then
+      imsize=120
+      if [[ $freq_ch -lt 80 ]]; then
+         imsize=60
+      fi
+   fi
+fi
 if [[ -n "$8" && "$8" != "-" ]]; then
    imsize=$8
 fi
@@ -235,7 +245,8 @@ if [[ $n_new_processed -gt 0 ]]; then
    for png in `ls ../chan*png`; 
    do      
       if [[ $(($i % $movie_png_rate)) == 0 ]]; then
-         i_str=`echo $i | awk '{printf("%06d\n",$1);}'`;    
+         out_i=$(($i / $movie_png_rate))
+         i_str=`echo $out_i | awk '{printf("%06d\n",$1);}'`;    
          ln -s ${png} chan_${freq_ch}_XX_${i_str}.png; 
       fi
       i=$(($i+1));

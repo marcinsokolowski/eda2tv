@@ -39,6 +39,16 @@ if [[ -n "$7" && "$7" != "-" ]]; then
 fi
 
 imsize=180 # 180 at <= 160 MHz and 360 at > 160 MHz is ok
+if [[ $freq_ch -gt 204 ]]; then
+   imsize=360
+else
+   if [[ $freq_ch -lt 141 ]]; then
+      imsize=120
+      if [[ $freq_ch -lt 80 ]]; then
+         imsize=60
+      fi
+   fi
+fi
 if [[ -n "$8" && "$8" != "-" ]]; then
    imsize=$8
 fi
