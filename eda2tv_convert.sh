@@ -66,6 +66,13 @@ if [[ -n "${11}" && "${11}" != "-" ]]; then
    reprocess_all=${11}
 fi
 
+echo "##################################"
+echo "PARAMETERS:"
+echo "##################################"
+echo "ch     = $freq_ch"
+echo "imsize = $imsize"
+echo "##################################"
+
 
 
 # temporary :
