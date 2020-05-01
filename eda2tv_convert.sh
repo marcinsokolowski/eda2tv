@@ -66,11 +66,17 @@ if [[ -n "${11}" && "${11}" != "-" ]]; then
    reprocess_all=${11}
 fi
 
+publish=1
+if [[ -n "${12}" && "${12}" != "-" ]]; then
+   publish=${12}
+fi
+
 echo "##################################"
 echo "PARAMETERS:"
 echo "##################################"
-echo "ch     = $freq_ch"
-echo "imsize = $imsize"
+echo "ch      = $freq_ch"
+echo "imsize  = $imsize"
+echo "publish = $publish"
 echo "##################################"
 
 

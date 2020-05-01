@@ -69,11 +69,17 @@ if [[ -n "${11}" && "${11}" != "-" ]]; then
    reprocess_all=${11}
 fi
 
+publish=1
+if [[ -n "${11}" && "${11}" != "-" ]]; then
+   publish=${11}
+fi
+
 echo "##################################"
 echo "PARAMETERS:"
 echo "##################################"
-echo "ch     = $ch"
-echo "imsize = $imsize"
+echo "ch      = $ch"
+echo "imsize  = $imsize"
+echo "publish = $publish"
 echo "##################################"
 
 
@@ -83,28 +89,32 @@ mkdir -p merged/
 echo "cp -a /data/real_time_calibration/last_calibration/chan_${ch}.uv merged/"
 cp -a /data/real_time_calibration/last_calibration/chan_${ch}.uv merged/
 
-# prepare html 
-echo "cp ~/Software/eda2tv/sky.template merged/sky.html"
-cp ~/Software/eda2tv/sky.template merged/sky.html
-echo "sed -i 's/FREQ_CHANNEL/${ch}/g' merged/sky.html" > sed!
-echo "sed -i 's/FREQ_VALUE_MHZ/${freq_mhz}/g' merged/sky.html" >> sed!
-echo "sed -i 's/STATION_NAME/${station_name_upper}/g' merged/sky.html" >> sed!
-chmod +x sed!
-./sed!
+if [[ $publish -gt 0 ]]; then
+   # prepare html 
+   echo "cp ~/Software/eda2tv/sky.template merged/sky.html"
+   cp ~/Software/eda2tv/sky.template merged/sky.html
+   echo "sed -i 's/FREQ_CHANNEL/${ch}/g' merged/sky.html" > sed!
+   echo "sed -i 's/FREQ_VALUE_MHZ/${freq_mhz}/g' merged/sky.html" >> sed!
+   echo "sed -i 's/STATION_NAME/${station_name_upper}/g' merged/sky.html" >> sed!
+   chmod +x sed!
+   ./sed!
 
-echo "ssh aavs1-server \"mkdir -p /exports/eda/${station_name}/tv/\""
-ssh aavs1-server "mkdir -p /exports/eda/${station_name}/tv/"
+   echo "ssh aavs1-server \"mkdir -p /exports/eda/${station_name}/tv/\""
+   ssh aavs1-server "mkdir -p /exports/eda/${station_name}/tv/"
 
-echo "scp merged/sky.html aavs1-server:/exports/eda/${station_name}/tv/"
-scp merged/sky.html aavs1-server:/exports/eda/${station_name}/tv/
+   echo "scp merged/sky.html aavs1-server:/exports/eda/${station_name}/tv/"
+   scp merged/sky.html aavs1-server:/exports/eda/${station_name}/tv/
+else
+   echo "WARNING : publishing of html and images is not required"
+fi   
 
 while [ 1 ];
 do
    echo
    date
    
-   echo "eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} \"${convert_options}\" ${movie_png_rate} ${reprocess_all}"
-   eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} "${convert_options}" ${movie_png_rate} ${reprocess_all}
+   echo "eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} \"${convert_options}\" ${movie_png_rate} ${reprocess_all} ${publish}"
+   eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} "${convert_options}" ${movie_png_rate} ${reprocess_all} ${publish}
    
    # only first iteration is requested to re-process old data (for example to re-run the pipeline off-line)
    # then set flag to 0
