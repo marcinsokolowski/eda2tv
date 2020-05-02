@@ -226,8 +226,11 @@ do
       fi
 
     
-      echo "miriad_applycal_and_image_list.sh uvfits_list chan_${freq_ch} ${imsize}"
-      miriad_applycal_and_image_list.sh uvfits_list chan_${freq_ch} ${imsize}
+#      echo "miriad_applycal_and_image_list.sh uvfits_list chan_${freq_ch} ${imsize}"
+#      miriad_applycal_and_image_list.sh uvfits_list chan_${freq_ch} ${imsize}
+      
+      echo "miriad_applycal_and_image_xxyy.sh uvfits_list chan_${freq_ch} ${imsize}"
+      miriad_applycal_and_image_xxyy.sh uvfits_list chan_${freq_ch} ${imsize}
 
       prev_path=`pwd`
       cd images/
