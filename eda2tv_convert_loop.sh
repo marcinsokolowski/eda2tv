@@ -86,8 +86,13 @@ echo "##################################"
 export PATH=~/Software/eda2tv/:$PATH
 
 mkdir -p merged/
-echo "cp -a /data/real_time_calibration/last_calibration/chan_${ch}.uv merged/"
-cp -a /data/real_time_calibration/last_calibration/chan_${ch}.uv merged/
+
+if [[ ! -d merged/chan_${ch}.uv ]]; then
+   echo "cp -a /data/real_time_calibration/last_calibration/chan_${ch}*.uv merged/"
+   cp -a /data/real_time_calibration/last_calibration/chan_${ch}*.uv merged/
+else
+   echo "Calibration file merged/chan_${ch}.uv already exists -> no need to copy"
+fi
 
 if [[ $publish -gt 0 ]]; then
    # prepare html 
