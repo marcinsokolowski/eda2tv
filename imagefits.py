@@ -10,6 +10,8 @@
 # https://docs.astropy.org/en/stable/visualization/wcsaxes/
 # https://docs.astropy.org/en/stable/wcs/
 
+# import pdb
+
 from __future__ import print_function
 import matplotlib
 matplotlib.use('Agg')
@@ -138,8 +140,8 @@ if __name__ == '__main__':
       # r = pyregion.open(regfile)
       r = pyregion.open(regfile).as_imagecoord(header=hdu_list[0].header)
       if len(r) > 0 :
-         patch_list, artist_list = r.get_mpl_patches_texts()
-         print(r)
+         patch_list, text_list = r.get_mpl_patches_texts()
+#         print(r)
       
          for p in patch_list:
             if options.window is not None :
@@ -150,11 +152,16 @@ if __name__ == '__main__':
                print("Changing center of the ellipse (%d,%d) -> (%d,%d)" % (xc,yc,p.center[0],p.center[1]))
       
             ax.add_patch(p)
-            p.set_edgecolor("green")
+            p.set_edgecolor("white") # was green
             print(p)
+            
+         # texts : 
+         for a in text_list :        
+            ax.add_artist(a) # for text
+            print(a)
 
    plt.text(-0.9,0.5,filename, horizontalalignment='center', verticalalignment='center', transform=ax.transAxes,fontsize=100)
-   plt.grid(color='white', ls='solid')
+   plt.grid(color='white', ls='solid', linewidth=5)
 #   plt.xlabel('RA' , fontsize=100)
 #   plt.ylabel('Dec' , fontsize=100)
 
