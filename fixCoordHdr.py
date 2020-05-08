@@ -163,6 +163,6 @@ fits[0].header['PV2_2'] = eta
 
 
 print("Writing xi = %.8f and eta = %.8f to fits header %s" % (xi,eta,fitsname))
-fits.writeto( fitsname, clobber=True ) 
+fits.writeto( fitsname, overwrite=True ) 
 
 
