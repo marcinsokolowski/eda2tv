@@ -15,8 +15,13 @@ if [[ -n "$3" && "$3" != "-" ]]; then
    movie_png_rate=$3
 fi
 
-mkdir -p images/movie/
-cd images/movie/
+dir=images/movie/
+if [[ -n "$4" && "$4" != "-" ]]; then
+   dir=$4
+fi
+
+mkdir -p ${dir}
+cd ${dir}
 
 echo "eda2tv_make_movie.sh started at :"
 date
