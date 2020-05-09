@@ -138,7 +138,13 @@ if __name__ == '__main__':
    if os.path.exists(regfile) and os.stat(regfile).st_size > 0 :
       import pyregion
       # r = pyregion.open(regfile)
-      r = pyregion.open(regfile).as_imagecoord(header=hdu_list[0].header)
+      r=[]
+      try :
+         r = pyregion.open(regfile).as_imagecoord(header=hdu_list[0].header)
+      except :
+         print("WARNING : exception caugth in pyregion.open(%s).as_imagecoord(header=hdu_list[0].header), most likely due to empty .reg file -> ignored" % (regfile))
+                  
+         
       if len(r) > 0 :
          patch_list, text_list = r.get_mpl_patches_texts()
 #         print(r)
