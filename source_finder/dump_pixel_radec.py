@@ -83,7 +83,7 @@ fitslist_data = pylab.loadtxt(fitslist,dtype='S') # python2 - string ; python3 -
 
 out_file=open(options.outfile,"w")
 # line = ( "%.4f %.4f %.4f %d %d %.4f %s\n" % (t_unix.value,max_value,pixel_value,x_c,y_c,rms,fitsfile))
-line = "# UNIX_TIME   MAX_VAL   PIXEL_VAL DIFF_VAL XC YC RMS_IQR RMS FITS_FILE\n"
+line = "# UNIX_TIME   MAX_VAL   PIXEL_VAL DIFF_VAL XC YC RMS_IQR RMS FITS_FILE ALT[deg] PIX_CNT \n"
 out_file.write(line)
 
 prev_pixel_value = None 
@@ -224,7 +224,7 @@ for fitsfile_bytes in fitslist_data :
    diff_value = 0.00
    if prev_pixel_value is not None :
       diff_value = pixel_value - prev_pixel_value
-   line = ( "%.4f %.4f %.4f %.4f %d %d %.4f %.4f %s %d %.4f %.4f %.4f %.4f %.4f\n" % (t_unix.value,max_val,pixel_value,diff_value,x_c,y_c,rms_iqr,rms,fitsfile,pixel_count,pixel_sum,pixel_sum2,max_noise,iqr,rms_iqr))
+   line = ( "%.4f %.4f %.4f %.4f %d %d %.4f %.4f %s %.2f %d %.4f %.4f %.4f %.4f %.4f\n" % (t_unix.value,max_val,pixel_value,diff_value,x_c,y_c,rms_iqr,rms,fitsfile,alt,pixel_count,pixel_sum,pixel_sum2,max_noise,iqr,rms_iqr))
    out_file.write(line)
    print("\t\t%s" % (line))
    
