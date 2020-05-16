@@ -64,17 +64,21 @@ print("outfile = %s" % (options.outfile))
 print("###############################################################################")
 
 
-fitslist_data = pylab.loadtxt(fitslist,dtype='string')
+fitslist_data = pylab.loadtxt(fitslist,dtype='S') # python2 - string ; python3 - S and later needs conversion to string using .decode("utf-8")
+# fitslist_data = pylab.loadtxt(fitslist)
 # print "Read list of %d fits files from list file %s" % (fitslist_data.shape[0],fitslist)
 
 out_file=open(options.outfile,"w")
 # line = ( "%.4f %.4f %.4f %d %d %.4f %s\n" % (t_unix.value,max_value,pixel_value,x_c,y_c,rms,fitsfile))
-line = "# UNIX_TIME MAX_VALUE PIXEL_VALUE XC YC RMS_IQR RMS FITS_FILE\n"
+line = "# UNIX_TIME   MAX_VAL   PIXEL_VAL DIFF_VAL XC YC RMS_IQR RMS FITS_FILE\n"
 out_file.write(line)
 
-
+prev_pixel_value = None 
 idx=0
-for fitsfile in fitslist_data :
+for fitsfile_bytes in fitslist_data :
+   fitsfile = fitsfile_bytes.decode("utf-8")
+  
+   print("Reading fits file %s" % (fitsfile))
    fits = pyfits.open(fitsfile)
    x_size=fits[0].header['NAXIS1']
    y_size=fits[0].header['NAXIS2']
@@ -87,8 +91,16 @@ for fitsfile in fitslist_data :
    
    print("Read FITS file %s has dateobs = %s -> %.2f unixtime , (%.4f,%.4f) [deg] -> (%.2f,%.2f) [pixels]" % (fitsfile,dateobs,t_unix.value,options.ra,options.dec,x_c0,y_c0))
    
-   x_c = int( round(x_c0) )
-   y_c = int( round(y_c0) )
+#   x_c = int( numpy.round(x_c0) )
+#   y_c = int( numpy.round(y_c0) )
+   x_c = -1000
+   y_c = -1000
+   if not numpy.isnan(x_c0) and not numpy.isnan(y_c0) :
+      x_c = int( numpy.round(x_c0) )
+      y_c = int( numpy.round(y_c0) )  
+   else :
+      print("WARNING : (RA,DEC) = (%.4f,%.4f) converted to (x,y) gives at least one NaN value -> %s skipped" % (options.ra, options.dec, fitsfile))
+      continue
    
    data = None
 #   if fits_type == 1 :
@@ -181,11 +193,15 @@ for fitsfile in fitslist_data :
 
 #   if count > 0 :
 #      sum = sum / count      
-   line = ( "%.4f %.4f %.4f %d %d %.4f %.4f %s %d %.4f %.4f %.4f %.4f %.4f\n" % (t_unix.value,max_val,pixel_value,x_c,y_c,rms_iqr,rms,fitsfile,pixel_count,pixel_sum,pixel_sum2,max_noise,iqr,rms_iqr))
+   diff_value = 0.00
+   if prev_pixel_value is not None :
+      diff_value = pixel_value - prev_pixel_value
+   line = ( "%.4f %.4f %.4f %.4f %d %d %.4f %.4f %s %d %.4f %.4f %.4f %.4f %.4f\n" % (t_unix.value,max_val,pixel_value,diff_value,x_c,y_c,rms_iqr,rms,fitsfile,pixel_count,pixel_sum,pixel_sum2,max_noise,iqr,rms_iqr))
    out_file.write(line)
    print("\t\t%s" % (line))
    
    idx = idx + 1 
+   prev_pixel_value = pixel_value
                                                                                        
 
 out_file.close()
