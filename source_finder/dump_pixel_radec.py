@@ -43,6 +43,8 @@ def mkdir_p(path):
 # CONSTANTS :
 MWA_POS=EarthLocation.from_geodetic(lon="116:40:14.93",lat="-26:42:11.95",height=377.8)
 
+last_processed_filestamp = "dump_pixel_radec.last_processed"
+
 fitslist="list"
 if len(sys.argv) > 1:
    fitslist = sys.argv[1]   
@@ -81,15 +83,42 @@ fitslist_data = pylab.loadtxt(fitslist,dtype='S') # python2 - string ; python3 -
 # fitslist_data = pylab.loadtxt(fitslist)
 # print "Read list of %d fits files from list file %s" % (fitslist_data.shape[0],fitslist)
 
-out_file=open(options.outfile,"w")
+out_file=open(options.outfile,"a+")
 # line = ( "%.4f %.4f %.4f %d %d %.4f %s\n" % (t_unix.value,max_value,pixel_value,x_c,y_c,rms,fitsfile))
-line = "# UNIX_TIME   MAX_VAL   PIXEL_VAL DIFF_VAL XC YC RMS_IQR RMS FITS_FILE ALT[deg] PIX_CNT \n"
-out_file.write(line)
+
+if not os.path.exists( options.outfile ) :
+   line = "# UNIX_TIME   MAX_VAL   PIXEL_VAL DIFF_VAL XC YC RMS_IQR RMS FITS_FILE ALT[deg] PIX_CNT \n"
+   out_file.write(line)
+
+# READ last processed file :
+last_processed_fitsname = None
+if os.path.exists( last_processed_filestamp ) :
+    file=open( last_processed_filestamp ,'r')
+    
+    # reads the entire file into a list of strings variable data :
+    data=file.readlines()
+    for line in data : 
+       words = line.split(' ')
+
+       if line[0] == '#' :
+         continue
+       
+       last_processed_fitsname = line  
+
+    print("DEBUG : last processed file = %s" % (last_processed_fitsname))
 
 prev_pixel_value = None 
 idx=0
 for fitsfile_bytes in fitslist_data :
    fitsfile = fitsfile_bytes.decode("utf-8")
+   
+   if last_processed_fitsname is None or fitsfile <= last_processed_fitsname :
+      continue
+
+   last_f = open( last_processed_filestamp , "w" )
+   last_f.write( last_processed_filestamp.join("\n") )
+   last_f.close()
+   
   
    print("Reading fits file %s" % (fitsfile))
    fits = pyfits.open(fitsfile)
