@@ -112,8 +112,10 @@ idx=0
 for fitsfile_bytes in fitslist_data :
    fitsfile = fitsfile_bytes.decode("utf-8")
    
-   if last_processed_fitsname is None or fitsfile <= last_processed_fitsname :
+   if last_processed_fitsname is not None and fitsfile <= last_processed_fitsname :
+      print("File %s <= last processed = %s" % (fitsfile,last_processed_fitsname))
       continue
+      
 
    last_f = open( last_processed_filestamp , "w" )
    last_f.write( last_processed_filestamp.join("\n") )
