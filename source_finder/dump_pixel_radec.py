@@ -5,7 +5,15 @@
 # https://python4astronomers.github.io/astropy/fits.html
 
 from __future__ import print_function
+
 import astropy.io.fits as pyfits
+from astropy import units as u
+from astropy.coordinates import SkyCoord, EarthLocation
+from astropy.time import Time
+import time
+import datetime
+
+
 import pylab
 import math
 from array import *
@@ -32,6 +40,9 @@ def mkdir_p(path):
    else: raise
                                  
 
+# CONSTANTS :
+MWA_POS=EarthLocation.from_geodetic(lon="116:40:14.93",lat="-26:42:11.95",height=377.8)
+
 fitslist="list"
 if len(sys.argv) > 1:
    fitslist = sys.argv[1]   
@@ -41,6 +52,7 @@ parser.set_usage("""dump_pixel_simple.py""")
 parser.add_option("--ra","--RA","--Ra",dest="ra",default=229.75,help="RA in degrees [default: %default]",type="float")
 parser.add_option("--dec","--DEC","--Dec",dest="dec",default=12.33333333,help="DEC in degrees [default: %default]",type="float")
 parser.add_option("--radius","-r",dest="radius",default=5,help="Find maximum pixel in radius around given position [default: %default]",type="int")
+parser.add_option("--min_alt","--min_elev","--min_elevation",dest="min_elevation",default=1.00,help="Minimum object elevation [default: %default]",type="float")
 
 parser.add_option('--calc_bkg','--calc_rms','--rms',dest="calc_rms",action="store_true",default=False, help="If calculate local RMS [default %s]")
 parser.add_option("--rms_inner_radius",dest="rms_inner_radius",default=5,help="RMS inner radius [default: %default]",type="int")
@@ -60,6 +72,7 @@ print("#########################################################################
 print("Finding maximum pixel around position (ra,dec) = (%.4f,%.4f) in radius %d pixels" % (options.ra,options.dec,options.radius))
 print("RMS calculation inner and outer radius : %d / %d pixels" % (options.rms_inner_radius,options.rms_outer_radius))
 print("outfile = %s" % (options.outfile))
+print("min_elevation = %.4f [deg]" % (options.min_elevation))
 # print "use_raw_value = %s" % (options.use_raw_value)
 print("###############################################################################")
 
@@ -86,6 +99,21 @@ for fitsfile_bytes in fitslist_data :
 
    t=Time(dateobs)
    t_unix=t.replicate(format='unix')
+   
+   coord = SkyCoord( options.ra, options.dec, equinox='J2000',frame='icrs', unit='deg')
+   coord.location = MWA_POS
+#            coord.obstime = Time("20200507T065634", scale='utc', format="utc" )
+            # chan_294_20200507T065634_I.fits
+   utc=fitsfile[9:24]  
+   uxtime = time.mktime(datetime.datetime.strptime(utc, "%Y%m%dT%H%M%S").timetuple()) + 8*3600 # just for Perth !!!
+   coord.obstime = Time( uxtime, scale='utc', format="unix" )
+   altaz = coord.transform_to('altaz')
+   az, alt = altaz.az.deg, altaz.alt.deg
+   
+   if alt < options.min_elevation :
+      print("%s : altitude = %.4f [deg] < min_alt = %.4f [deg] -> skipped" % (fitsfile,alt,options.min_elevation))
+      continue
+
    
    (x_c0,y_c0) = sky2pix.sky2pix( fits, options.ra, options.dec )
    
