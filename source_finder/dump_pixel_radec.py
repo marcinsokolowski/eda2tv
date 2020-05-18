@@ -53,7 +53,7 @@ parser=optparse.OptionParser()
 parser.set_usage("""dump_pixel_simple.py""")
 parser.add_option("--ra","--RA","--Ra",dest="ra",default=229.75,help="RA in degrees [default: %default]",type="float")
 parser.add_option("--dec","--DEC","--Dec",dest="dec",default=12.33333333,help="DEC in degrees [default: %default]",type="float")
-parser.add_option("--radius","-r",dest="radius",default=5,help="Find maximum pixel in radius around given position [default: %default]",type="int")
+parser.add_option("--radius","-r",dest="radius",default=15,help="Find maximum pixel in radius around given position [default: %default]",type="int")
 parser.add_option("--min_alt","--min_elev","--min_elevation",dest="min_elevation",default=1.00,help="Minimum object elevation [default: %default]",type="float")
 
 parser.add_option('--calc_bkg','--calc_rms','--rms',dest="calc_rms",action="store_true",default=False, help="If calculate local RMS [default %s]")
@@ -98,9 +98,10 @@ if os.path.exists( last_processed_filestamp ) :
     # reads the entire file into a list of strings variable data :
     data=file.readlines()
     for line in data : 
+       line = line. rstrip('\n')
        words = line.split(' ')
 
-       if line[0] == '#' :
+       if line[0] == '#' or len(line)<2 :
          continue
        
        last_processed_fitsname = line  
@@ -118,8 +119,9 @@ for fitsfile_bytes in fitslist_data :
       
 
    last_f = open( last_processed_filestamp , "w" )
-   last_f.write( last_processed_filestamp.join("\n") )
+   last_f.write( fitsfile + "\n" )
    last_f.close()
+   print("DEBUG : saved last processed fits name %s to file %s" % (fitsfile,last_processed_filestamp))
    
   
    print("Reading fits file %s" % (fitsfile))
