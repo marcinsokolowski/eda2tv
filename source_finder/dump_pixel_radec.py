@@ -83,11 +83,15 @@ fitslist_data = pylab.loadtxt(fitslist,dtype='S') # python2 - string ; python3 -
 # fitslist_data = pylab.loadtxt(fitslist)
 # print "Read list of %d fits files from list file %s" % (fitslist_data.shape[0],fitslist)
 
+b_header = False
+if not os.path.exists( options.outfile ) :
+   b_header = True
+
 out_file=open(options.outfile,"a+")
 # line = ( "%.4f %.4f %.4f %d %d %.4f %s\n" % (t_unix.value,max_value,pixel_value,x_c,y_c,rms,fitsfile))
 
-if not os.path.exists( options.outfile ) :
-   line = "# UNIX_TIME   MAX_VAL   PIXEL_VAL DIFF_VAL XC YC RMS_IQR RMS FITS_FILE ALT[deg] PIX_CNT \n"
+if b_header :
+   line = "# UNIX_TIME   PIXEL_VAL   MAX_VAL DIFF_VAL XC YC RMS_IQR RMS FITS_FILE ALT[deg] PIX_CNT \n"
    out_file.write(line)
 
 # READ last processed file :
@@ -257,7 +261,7 @@ for fitsfile_bytes in fitslist_data :
    diff_value = 0.00
    if prev_pixel_value is not None :
       diff_value = pixel_value - prev_pixel_value
-   line = ( "%.4f %.4f %.4f %.4f %d %d %.4f %.4f %s %.2f %d %.4f %.4f %.4f %.4f %.4f\n" % (t_unix.value,max_val,pixel_value,diff_value,x_c,y_c,rms_iqr,rms,fitsfile,alt,pixel_count,pixel_sum,pixel_sum2,max_noise,iqr,rms_iqr))
+   line = ( "%.4f %.4f %.4f %.4f %d %d %.4f %.4f %s %.2f %d %.4f %.4f %.4f %.4f %.4f\n" % (t_unix.value,pixel_value,max_val,diff_value,x_c,y_c,rms_iqr,rms,fitsfile,alt,pixel_count,pixel_sum,pixel_sum2,max_noise,iqr,rms_iqr))
    out_file.write(line)
    print("\t\t%s" % (line))
    
