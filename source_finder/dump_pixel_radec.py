@@ -117,8 +117,11 @@ idx=0
 for fitsfile_bytes in fitslist_data :
    fitsfile = fitsfile_bytes.decode("utf-8")
    
-   if last_processed_fitsname is not None and fitsfile <= last_processed_fitsname :
-      print("File %s <= last processed = %s" % (fitsfile,last_processed_fitsname))
+   do_write = True
+   if last_processed_fitsname is not None and fitsfile < last_processed_fitsname :
+      print("File %s < last processed = %s" % (fitsfile,last_processed_fitsname))
+      if fitsfile == last_processed_fitsname :
+         do_write = False # not to reapet, but read the last processed file to have difference != 0 !!!
       continue
       
 
@@ -261,9 +264,11 @@ for fitsfile_bytes in fitslist_data :
    diff_value = 0.00
    if prev_pixel_value is not None :
       diff_value = pixel_value - prev_pixel_value
-   line = ( "%.4f %.4f %.4f %.4f %d %d %.4f %.4f %s %.2f %d %.4f %.4f %.4f %.4f %.4f\n" % (t_unix.value,pixel_value,max_val,diff_value,x_c,y_c,rms_iqr,rms,fitsfile,alt,pixel_count,pixel_sum,pixel_sum2,max_noise,iqr,rms_iqr))
-   out_file.write(line)
-   print("\t\t%s" % (line))
+
+   if do_write and idx > 0 :
+      line = ( "%.4f %.4f %.4f %.4f %d %d %.4f %.4f %s %.2f %d %.4f %.4f %.4f %.4f %.4f\n" % (t_unix.value,pixel_value,max_val,diff_value,x_c,y_c,rms_iqr,rms,fitsfile,alt,pixel_count,pixel_sum,pixel_sum2,max_noise,iqr,rms_iqr))
+      out_file.write(line)
+      print("\t\t%s" % (line))
    
    idx = idx + 1 
    prev_pixel_value = pixel_value
