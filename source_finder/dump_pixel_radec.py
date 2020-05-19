@@ -91,7 +91,7 @@ out_file=open(options.outfile,"a+")
 # line = ( "%.4f %.4f %.4f %d %d %.4f %s\n" % (t_unix.value,max_value,pixel_value,x_c,y_c,rms,fitsfile))
 
 if b_header :
-   line = "# UNIX_TIME   PIXEL_VAL   MAX_VAL DIFF_VAL XC YC RMS_IQR RMS FITS_FILE ALT[deg] PIX_CNT \n"
+   line = "# UNIX_TIME   PIXEL_VAL MAX_VAL(r=%d) DIFF_VAL XC YC RMS_IQR RMS FITS_FILE ALT[deg] PIX_CNT \n" % (options.radius)
    out_file.write(line)
 
 # READ last processed file :
