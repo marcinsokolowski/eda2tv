@@ -10,6 +10,9 @@ station=eda2
 start_diff=1
 start_monitoring=1
 publish=1 # copy images/movie to the www server 
+correlator_inttime=1.9818086 
+n_avg=1
+eda2tv_inttime=`echo $n_avg" "$correlator_inttime | awk '{print ($1*$2);}'`
 
 # difference images on both ?
 diff_xy=1
@@ -61,8 +64,8 @@ if [[ $correlated_data -gt 0 ]]; then
    echo "Starting eda2tv for correlated data in channel = $freq_ch at :"
    date
 
-   echo "nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 9.9090430 1 ${station} 1 $imsize \"-a 5\" 1 0 ${publish} > eda2tv.out 2>&1 &"   
-   nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 9.9090430 1 ${station} 1 $imsize "-a 5" 1 0 ${publish} > eda2tv.out 2>&1 &
+   echo "nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 $eda2tv_inttime 1 ${station} 1 $imsize \"-a $n_avg\" 1 0 ${publish} > eda2tv.out 2>&1 &"   
+   nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 $eda2tv_inttime 1 ${station} 1 $imsize "-a $n_avg" 1 0 ${publish} > eda2tv.out 2>&1 &
 
    echo "sleep 5"   
    sleep 5
