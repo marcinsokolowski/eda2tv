@@ -9,6 +9,11 @@ imsize=180
 station=eda2
 start_diff=1
 start_monitoring=1
+publish=1 # copy images/movie to the www server 
+
+# difference images on both ?
+diff_xy=1
+diff_i=1
 
 # auto-detect frequency channel :
 hdf5_count=`ls *.hdf5 | wc -l`
@@ -56,8 +61,8 @@ if [[ $correlated_data -gt 0 ]]; then
    echo "Starting eda2tv for correlated data in channel = $freq_ch at :"
    date
 
-   echo "nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 9.9090430 1 ${station} 1 $imsize \"-a 5\" 1 0 1 > eda2tv.out 2>&1 &"   
-   nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 9.9090430 1 ${station} 1 $imsize "-a 5" 1 0 1 > eda2tv.out 2>&1 &
+   echo "nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 9.9090430 1 ${station} 1 $imsize \"-a 5\" 1 0 ${publish} > eda2tv.out 2>&1 &"   
+   nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 9.9090430 1 ${station} 1 $imsize "-a 5" 1 0 ${publish} > eda2tv.out 2>&1 &
 
    echo "sleep 5"   
    sleep 5
@@ -68,9 +73,21 @@ fi
 
 if [[ $start_diff -gt 0 ]]; then 
    cd merged/
-   echo "nohup miriad_diff_images_loop.sh > diff.out 2>&1 &"
-   nohup miriad_diff_images_loop.sh > diff.out 2>&1 & 
+   
+   # diff XX and YY images :
+   if [[ $diff_xy -gt 0 ]]; then
+      echo "nohup miriad_diff_images_loop.sh > diff.out 2>&1 &"
+      nohup miriad_diff_images_loop.sh > diff.out 2>&1 & 
+   fi
+   
+   if [[ $diff_i -gt 0 ]]; then   
+      # I images :
+      echo "nohup miriad_diff_stokesi_images_loop.sh > miriad_diff_stokesi_images_loop.out 2>&1 &"
+      nohup miriad_diff_stokesi_images_loop.sh > miriad_diff_stokesi_images_loop.out 2>&1 &
+   fi
+   
    cd ..
+   
    
    echo "sleep 5"   
    sleep 5
