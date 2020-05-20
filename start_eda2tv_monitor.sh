@@ -59,6 +59,9 @@ echo "imsize          = $imsize"
 echo "##############################################################"
 
 mkdir -p merged/
+echo $freq_ch >> channel.txt
+echo $freq_ch >> merged/channel.txt
+
 
 if [[ $correlated_data -gt 0 ]]; then 
    echo "Starting eda2tv for correlated data in channel = $freq_ch at :"
