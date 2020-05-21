@@ -10,7 +10,7 @@ fi
 
 # station=eda2
 # station=aavs2
-station=`awk -v station_section=0 '{if(index($1,":")>0 && NF==1){if(index($1,"station")>0 ){station_section=1;}else{station_section=0;}}if(station_section>0){if($1=="name:"){station_name=$2;gsub("\"","",station_name);print tolower(station_name);}}}' /opt/aavs/config/station.yml`
+station=`awk -v station_section=0 '{if(index($1,":")>0 && NF==1){if(index($1,"station")>0 ){station_section=1;}else{station_section=0;}}if(station_section>0){if($1=="name:"){station_name=$2;gsub("\"","",station_name);gsub("\r","",station_name);print tolower(station_name);}}}' /opt/aavs/config/station.yml`
 
 correlated_data=1
 freq_ch=204
@@ -26,6 +26,12 @@ eda2tv_inttime=`echo $n_avg" "$correlator_inttime | awk '{print ($1*$2);}'`
 # difference images on both ?
 diff_xy=1
 diff_i=1
+
+echo "###################################################"
+echo "PARAMETERS :"
+echo "###################################################"
+echo "station = |$station|"
+echo "###################################################"
 
 # auto-detect frequency channel :
 hdf5_count=`ls *.hdf5 | wc -l`
