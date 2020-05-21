@@ -2,11 +2,20 @@
 
 export PATH=~/Software/eda2tv/:~/Software/eda2tv/source_finder:~/Software/miriad_scripts:$PATH
 
+# integrity checks
+if [[ ! -s /opt/aavs/config/station.yml ]]; then
+   echo "ERROR : file or symbolic link /opt/aavs/config/station.yml to station config file does not exist -> cannot continue"
+   exit
+fi
+
+# station=eda2
+# station=aavs2
+station=`awk -v station_section=0 '{if(index($1,":")>0 && NF==1){if(index($1,"station")>0 ){station_section=1;}else{station_section=0;}}if(station_section>0){if($1=="name:"){station_name=$2;gsub("\"","",station_name);print tolower(station_name);}}}' /opt/aavs/config/station.yml`
+
 correlated_data=1
 freq_ch=204
 auto_freq=1
 imsize=180
-station=eda2
 start_diff=1
 start_monitoring=1
 publish=1 # copy images/movie to the www server 
