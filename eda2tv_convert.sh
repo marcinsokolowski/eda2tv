@@ -1,5 +1,7 @@
 #!/bin/bash
 
+start_ux=`date +%s`
+
 freq_ch=204
 if [[ -n "$1" && "$1" != "-" ]]; then
    freq_ch=$1
@@ -292,3 +294,6 @@ fi
 
 echo "eda2tv_convert.sh finished at :"
 date
+end_ux=`date +%s`
+took=$(($start_ux-$end_ux))
+echo "eda2tv_convert.sh took $took [seconds]"
