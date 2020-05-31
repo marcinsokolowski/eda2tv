@@ -87,14 +87,14 @@ def read_list( list_filename ) :
             uvbase = words[0+0] 
             if uvbase.find(".fits") < 0 :
                uvfits_x = uvbase + "_XX.fits"
-# only XX for now 
-#               uvfits_y = uvbase + "_YY.fits"
+               uvfits_y = uvbase + "_YY.fits"
 
 
                out_fits_list.append( uvfits_x )
-               out_fits_list.append( uvfits_y )
+#               out_fits_list.append( uvfits_y )
 
-               print("DEBUG : added %s and %s" % (uvfits_x,uvfits_y))
+#               print("DEBUG : added %s and %s" % (uvfits_x,uvfits_y))
+               print("DEBUG : added %s" % (uvfits_x))
             else :
                out_fits_list.append( uvbase )
                print("DEBUG : added %s" % (uvbase))

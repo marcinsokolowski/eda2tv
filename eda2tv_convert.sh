@@ -259,8 +259,8 @@ do
     
       # also does (XX+YY) -> I :
       # convert every ${movie_png_rate} image to png 
-      echo "miriad_applycal_and_image_list.sh uvfits_list chan_${freq_ch} ${imsize} - - ${movie_png_rate}"
-      miriad_applycal_and_image_list.sh uvfits_list chan_${freq_ch} ${imsize} - - ${movie_png_rate}
+      echo "miriad_applycal_and_image_list.sh uvfits_list chan_${freq_ch} ${imsize} - 0 ${movie_png_rate}"
+      miriad_applycal_and_image_list.sh uvfits_list chan_${freq_ch} ${imsize} - 0 ${movie_png_rate}
       
       prev_path=`pwd`
       cd images/
@@ -277,6 +277,9 @@ do
       cd $prev_path
 
       echo $line >> processed.txt      
+      
+      echo "PROFILER : hdf5 file processing finished at :"
+      date
 #   else
 #      echo "File $line already processed"
    fi
