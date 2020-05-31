@@ -13,6 +13,10 @@
 # import pdb
 
 from __future__ import print_function
+
+import time
+start_time0=time.time()
+
 import matplotlib
 matplotlib.use('Agg')
 
@@ -56,156 +60,213 @@ def parse_options(idx):
    parser.add_option("--regfile",dest="regfile",default=None,help="Region file [default: None]",type="string")
    parser.add_option('--dpi',dest="dpi",default=25, help="Image DPI [default %default]",type="int")
    parser.add_option('--out_format','--out_type','--ext','--out_image_type',dest="image_format",default="jpg", help="Output image type [default %default]")
-   # parser.add_option('--use_max_flux','--use_max_peak_flux','--max_flux',dest="use_max_peak_flux",action="store_true",default=False, help="Use maximum flux value around the source center [default %]")
+   parser.add_option('--reg_postfix','--reg_ext',dest="reg_postfix",default=".reg",help="Region file to use [default %default]")
+   parser.add_option('--fits_list','--list_file','--list','--fitslist',dest="fitslist_file",default=None, help="FITS list file [default %]")
    
    (options,args) = parser.parse_args(sys.argv[2:])
    
    return (options,args)
 
 
+def read_list( list_filename ) :
+   out_fits_list=[]
+
+   print("read_list : reading file %s" % (list_filename))
+
+   if os.path.exists( list_filename ) and os.stat( list_filename ).st_size > 0 :
+      file=open( list_filename ,'r')
+      data=file.readlines()
+      for line in data :
+         line=line.rstrip()
+         words = line.split(' ')
+         if line[0] == '#' :
+            continue
+
+         if line[0] != "#" :
+            uvbase = words[0+0] 
+            if uvbase.find(".fits") < 0 :
+               uvfits_x = uvbase + "_XX.fits"
+               uvfits_y = uvbase + "_YY.fits"
+
+
+               out_fits_list.append( uvfits_x )
+               out_fits_list.append( uvfits_y )
+
+               print("DEBUG : added %s and %s" % (uvfits_x,uvfits_y))
+            else :
+               out_fits_list.append( uvbase )
+               print("DEBUG : added %s" % (uvbase))
+      file.close()
+   else :
+      print("WARNING : empty or non-existing file %s" % (list_filename))
+
+
+   return out_fits_list
+
+
 if __name__ == '__main__':
+   start_time = time.time()
+   print("fixCoordHdr.py : import took %.6f [seconds]" % (start_time-start_time0))
+
+
    filename="start_timeindex0564_ux1521883954.20.fits"
    if len(sys.argv) > 1:   
       filename = sys.argv[1]
 
    (options,args) = parse_options(0)
    
-   jpgfile=filename.replace('.fits', '.'+options.image_format )
-   regfile=filename.replace('.fits', '.reg' )
-
-
-   if options.outfile is not None :
-      jpgfile = options.outfile
+   fits_list=[]
+   if options.fitslist_file is not None :
+      fits_list=read_list( options.fitslist_file )      
+   else :
+      fits_list.append(filename)
+         
    
-   if options.regfile is not None :
-      regfile = options.regfile   
+   for filename in fits_list :       
+      jpgfile=filename.replace('.fits', '.'+options.image_format )
+      regfile=filename.replace('.fits', options.reg_postfix )
 
-   hdu_list = fits.open(filename)
-   hdu_list.info()
+
+      if options.outfile is not None :
+         jpgfile = options.outfile
    
-   image_data = hdu_list[0].data
-   header=hdu_list[0].header
-   wcs = WCS( header )
-   dim=wcs.naxis
+      if options.regfile is not None :
+         regfile = options.regfile   
+
+      print("DEBUG : converting file %s -> %s , %s" % (filename,jpgfile,regfile))
+
+      hdu_list = fits.open(filename)
+      hdu_list.info()
+   
+      image_data = hdu_list[0].data
+      header=hdu_list[0].header
+      wcs = WCS( header )
+      dim=wcs.naxis
 #   print(image_data.shape)
-   naxes=header['NAXIS']
-   print("DEBUG : dim = %d vs. naxes = %d" % (dim,naxes))
+      naxes=header['NAXIS']
+      print("DEBUG : dim = %d vs. naxes = %d" % (dim,naxes))
    
-   if dim >= 4 :
-      print("WARNING : removing unwanted axis > 2")
-      removed = False
+      if dim >= 4 :
+         print("WARNING : removing unwanted axis > 2")
+         removed = False
 
 #      try :
-      for keyword in ['CUNIT3','CDELT3','CRVAL3','CRPIX3','CTYPE3','NAXIS3','CUNIT4','CDELT4','CRVAL4','CRPIX4','CTYPE4','NAXIS4'] :
-         try :
-            if header.count( keyword ) > 0 :
-                print("DEBUG : removing keyword |%s|" % (keyword))
-                # fits[0].header.remove( keyword )
-                hdu_list[0].header.remove( keyword )
-                removed = True
-         except :
-            print("WARNING : could not remove keyword = %s" % (keyword))
+         for keyword in ['CUNIT3','CDELT3','CRVAL3','CRPIX3','CTYPE3','NAXIS3','CUNIT4','CDELT4','CRVAL4','CRPIX4','CTYPE4','NAXIS4'] :
+            try :
+               if header.count( keyword ) > 0 :
+                   print("DEBUG : removing keyword |%s|" % (keyword))
+                   # fits[0].header.remove( keyword )
+                   hdu_list[0].header.remove( keyword )
+                   removed = True
+            except :
+               print("WARNING : could not remove keyword = %s" % (keyword))
             
             
-      if removed : 
-         data2=image_data[0,0].copy()
-         hdu_list[0].data=data2
+         if removed : 
+            data2=image_data[0,0].copy()
+            hdu_list[0].data=data2
 
-      wcs = WCS( hdu_list[0].header )
-      dim = wcs.naxis
-      naxes = header['NAXIS']
+         wcs = WCS( hdu_list[0].header )
+         dim = wcs.naxis
+         naxes = header['NAXIS']
       
-      print("DEBUG2 : dim = %d vs. naxes = %d (after removal)" % (dim,naxes))
+         print("DEBUG2 : dim = %d vs. naxes = %d (after removal)" % (dim,naxes))
 
 
-#   image_data = fits.getdata(filename)
-   image_data = hdu_list[0].data
-   if image_data.ndim >= 4 :
-       image_data = hdu_list[0].data[0,0]
+#      image_data = fits.getdata(filename)
+      image_data = hdu_list[0].data
+      if image_data.ndim >= 4 :
+          image_data = hdu_list[0].data[0,0]
 #      image_data = fits.getdata(filename)[0,0]
 #   print(type(image_data))
 #   print(image_data.shape)
 
-   if options.window is not None : 
-      print("Using only sub-window (%d,%d)-(%d,%d) of the full image" % (options.window[0],options.window[1],options.window[2],options.window[3]))
-      image_data2=image_data[options.window[0]:options.window[2],options.window[1]:options.window[3]].copy()
-      image_data = image_data2
+      if options.window is not None : 
+         print("Using only sub-window (%d,%d)-(%d,%d) of the full image" % (options.window[0],options.window[1],options.window[2],options.window[3]))
+         image_data2=image_data[options.window[0]:options.window[2],options.window[1]:options.window[3]].copy()
+         image_data = image_data2
    
-   #   if options.transpose :
-   #      image_data = image_data2.transpose()
+      #   if options.transpose :
+      #      image_data = image_data2.transpose()
 
-  # hdu_list.close()
+      # hdu_list.close()
 
-   # histogram = plt.hist(image_data.flatten(), 1000) # 1000 bins 
-   # histogram = plt.hist(image_data.flatten(), bins=100, range=[-2,2]) # 1000 bins
-   # plt.show()
+      # histogram = plt.hist(image_data.flatten(), 1000) # 1000 bins 
+      # histogram = plt.hist(image_data.flatten(), bins=100, range=[-2,2]) # 1000 bins
+      # plt.show()
 
 
 #   fig = plt.figure( figsize=(200, 60), dpi = options.dpi, tight_layout=True)
-   fig = plt.figure( figsize=(200, 60), dpi = options.dpi )
+      fig = plt.figure( figsize=(200, 60), dpi = options.dpi )
 # OLD   ax = fig.add_subplot(111, aspect='equal')
-   ax = fig.add_subplot(111, projection=wcs)
-   # plt.imshow(image_data, cmap='gray', norm=LogNorm())
-   # GOOD : plt.imshow(image_data, cmap='gray', norm=matplotlib.colors.NoNorm())
-   mean=image_data.mean()
-   rms=image_data.std()
-   x_size=image_data.shape[0]
-   y_size=image_data.shape[1]
+      ax = fig.add_subplot(111, projection=wcs)
+      # plt.imshow(image_data, cmap='gray', norm=LogNorm())
+      # GOOD : plt.imshow(image_data, cmap='gray', norm=matplotlib.colors.NoNorm())
+      mean=image_data.mean()
+      rms=image_data.std()
+      x_size=image_data.shape[0]
+      y_size=image_data.shape[1]
 
-   if options.transpose :
-      # cmap='gray'
-      plt.imshow(image_data.transpose(),  vmin=mean-5*rms, vmax=mean+5*rms , origin='lower', cmap=plt.cm.viridis)
-      y_size=image_data.shape[0]
-      x_size=image_data.shape[1]
-   else :
-      # cmap='gray'
-      plt.imshow(image_data, vmin=mean-5*rms, vmax=mean+5*rms , origin='lower', cmap=plt.cm.viridis)
-#      plt.imshow(image_data, vmin=0.00, vmax=50000, origin='lower' , cmap=plt.cm.viridis)
+      if options.transpose :
+         # cmap='gray'
+         plt.imshow(image_data.transpose(),  vmin=mean-5*rms, vmax=mean+5*rms , origin='lower', cmap=plt.cm.viridis)
+         y_size=image_data.shape[0]
+         x_size=image_data.shape[1]
+      else :
+         # cmap='gray'
+         plt.imshow(image_data, vmin=mean-5*rms, vmax=mean+5*rms , origin='lower', cmap=plt.cm.viridis)
+#         plt.imshow(image_data, vmin=0.00, vmax=50000, origin='lower' , cmap=plt.cm.viridis)
       
-   plt.colorbar()
+      plt.colorbar()
 
-   # image title (fits file name) : 
-   # OLD (before 20190909) :
-   # plt.text(x_size/3,-10,filename)
+      # image title (fits file name) : 
+      # OLD (before 20190909) :
+      # plt.text(x_size/3,-10,filename)
    
 
-   if os.path.exists(regfile) and os.stat(regfile).st_size > 0 :
-      import pyregion
-      # r = pyregion.open(regfile)
-      r=[]
-      try :
-         r = pyregion.open(regfile).as_imagecoord(header=hdu_list[0].header)
-      except :
-         print("WARNING : exception caugth in pyregion.open(%s).as_imagecoord(header=hdu_list[0].header), most likely due to empty .reg file -> ignored" % (regfile))
+      if os.path.exists(regfile) and os.stat(regfile).st_size > 0 :
+         import pyregion
+         # r = pyregion.open(regfile)
+         r=[]
+         try :
+            r = pyregion.open(regfile).as_imagecoord(header=hdu_list[0].header)
+         except :
+            print("WARNING : exception caugth in pyregion.open(%s).as_imagecoord(header=hdu_list[0].header), most likely due to empty .reg file -> ignored" % (regfile))
                   
          
-      if len(r) > 0 :
-         patch_list, text_list = r.get_mpl_patches_texts()
-#         print(r)
+         if len(r) > 0 :
+            patch_list, text_list = r.get_mpl_patches_texts()
+#            print(r)
       
-         for p in patch_list:
-            if options.window is not None :
-               xc=p.center[0]
-               yc=p.center[1]
-               
-               p.center = (xc-options.window[0],yc-options.window[1])
-               print("Changing center of the ellipse (%d,%d) -> (%d,%d)" % (xc,yc,p.center[0],p.center[1]))
+            for p in patch_list:
+               if options.window is not None :
+                  xc=p.center[0]
+                  yc=p.center[1]
+                 
+                  p.center = (xc-options.window[0],yc-options.window[1])
+                  print("Changing center of the ellipse (%d,%d) -> (%d,%d)" % (xc,yc,p.center[0],p.center[1]))
       
-            ax.add_patch(p)
-            p.set_edgecolor("white") # was green
-            print(p)
+               ax.add_patch(p)
+               p.set_edgecolor("white") # was green
+               print(p)
             
-         # texts : 
-         for a in text_list :        
-            ax.add_artist(a) # for text
-            print(a)
+            # texts : 
+            for a in text_list :        
+               ax.add_artist(a) # for text
+               print(a)
 
-   plt.text(-0.9,0.5,filename, horizontalalignment='center', verticalalignment='center', transform=ax.transAxes,fontsize=100)
-   plt.grid(color='white', ls='solid', linewidth=5)
-#   plt.xlabel('RA' , fontsize=100)
-#   plt.ylabel('Dec' , fontsize=100)
+      plt.text(-0.9,0.5,filename, horizontalalignment='center', verticalalignment='center', transform=ax.transAxes,fontsize=100)
+      plt.grid(color='white', ls='solid', linewidth=5)
+#      plt.xlabel('RA' , fontsize=100)
+#      plt.ylabel('Dec' , fontsize=100)
 
-   mkdir_p( options.outdir )
-   # fig=plt.figure()
-   # plt.plotfile(filename,(0,1),delimiter=" ",names="Frequency [MHz],T[K]",newfig=False)
-   plt.savefig( options.outdir + "/" + jpgfile, format = options.image_format, dpi = fig.dpi)
+      mkdir_p( options.outdir )
+      # fig=plt.figure()
+      # plt.plotfile(filename,(0,1),delimiter=" ",names="Frequency [MHz],T[K]",newfig=False)
+      jpg_path=options.outdir + "/" + jpgfile
+      plt.savefig( jpg_path , format = options.image_format, dpi = fig.dpi)
+      print("DEBUG : saved file %s" % (jpg_path))
+
+
+   end_time = time.time()
+   print("fixCoordHdr.py: Start_time = %.6f , end_time = %.6f -> took = %.6f seconds (including import took %.6f seconds)" % (start_time,end_time,(end_time-start_time),(end_time-start_time0)))
