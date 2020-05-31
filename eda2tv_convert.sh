@@ -71,12 +71,19 @@ if [[ -n "${12}" && "${12}" != "-" ]]; then
    publish=${12}
 fi
 
+process_last_hdf5_file=0
+if [[ -n "${13}" && "${13}" != "-" ]]; then
+   process_last_hdf5_file=${13}
+fi
+
+
 echo "##################################"
 echo "PARAMETERS:"
 echo "##################################"
 echo "ch      = $freq_ch"
 echo "imsize  = $imsize"
 echo "publish = $publish"
+echo "process_last_hdf5_file = $process_last_hdf5_file"
 echo "##################################"
 
 
@@ -120,9 +127,31 @@ else
          cd merged/
 
 
-         echo "INFO : Using full HDF5 files (requires option --max_file_size_gb to be set to maximum a few minutes of acquisition"
-         echo $last_corr_file > new_merged_hdf5_list.txt
-         ln -s ../${last_corr_file}
+         if [[ $process_last_hdf5_file -gt 0 ]]; then
+            # re-process just the latest HDF5 file
+            echo "INFO : Using full HDF5 files (requires option --max_file_size_gb to be set to maximum a few minutes of acquisition"
+            echo $last_corr_file > new_merged_hdf5_list.txt
+            ln -s ../${last_corr_file}
+         else         
+            # re-process all not processed yet :
+            echo "rm -f new_merged_hdf5_list.txt"
+            rm -f new_merged_hdf5_list.txt
+            
+            for hdf5file_full_path in `ls -tr ../correlation_burst_*hdf5`
+            do
+               hdf5file=`basename ${hdf5file_full_path}`
+               
+               if [[ ! -s ${hdf5file} ]]; then
+                  echo "ln -s ../${hdf5file}"
+                  ln -s ../${hdf5file}
+                  
+                  echo ${hdf5file} >> new_merged_hdf5_list.txt
+                  echo "PROGRESS : added ${hdf5file} file for processing ..."
+               else
+                  echo "INFO : line ${hdf5file} already exists -> skipped"
+               fi
+            done
+         fi
          pwd
          date
       else
@@ -234,8 +263,12 @@ do
       last_image=`ls -tr *.png | tail -1`
       echo "Last image = $last_image"
    
-      echo "scp $last_image aavs1-server:/exports/eda/${station_name}/tv/sky.png"
-      scp $last_image aavs1-server:/exports/eda/${station_name}/tv/sky.png              
+      if [[ $publish -gt 0 ]]; then
+         echo "scp $last_image aavs1-server:/exports/eda/${station_name}/tv/sky.png"
+         scp $last_image aavs1-server:/exports/eda/${station_name}/tv/sky.png              
+      else
+         echo "WARNING : publishing of results on the WWW server is not required"         
+      fi
  
       cd $prev_path
 

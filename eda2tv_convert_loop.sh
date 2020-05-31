@@ -11,7 +11,7 @@ if [[ -n "$2" && "$2" != "-" ]]; then
    voltages=$2
 fi
 
-process_all=0
+process_all=0 # this is a flag <=0 -> process all uvfits files, 1 latest only, N>1 -> process every N uvfits
 if [[ -n "$3" && "$3" != "-" ]]; then
    process_all=$3
 fi
@@ -110,7 +110,7 @@ if [[ $publish -gt 0 ]]; then
    echo "scp merged/sky.html aavs1-server:/exports/eda/${station_name}/tv/"
    scp merged/sky.html aavs1-server:/exports/eda/${station_name}/tv/
 else
-   echo "WARNING : publishing of html and images is not required"
+   echo "WARNING : publishing of html and images on WWW server is not required"
 fi   
 
 while [ 1 ];
