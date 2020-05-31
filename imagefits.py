@@ -84,13 +84,47 @@ if __name__ == '__main__':
    hdu_list.info()
    
    image_data = hdu_list[0].data
-   wcs = WCS(hdu_list[0].header)
-   print(image_data.shape)
-   image_data = fits.getdata(filename)
+   header=hdu_list[0].header
+   wcs = WCS( header )
+   dim=wcs.naxis
+#   print(image_data.shape)
+   naxes=header['NAXIS']
+   print("DEBUG : dim = %d vs. naxes = %d" % (dim,naxes))
+   
+   if dim >= 4 :
+      print("WARNING : removing unwanted axis > 2")
+      removed = False
+
+#      try :
+      for keyword in ['CUNIT3','CDELT3','CRVAL3','CRPIX3','CTYPE3','NAXIS3','CUNIT4','CDELT4','CRVAL4','CRPIX4','CTYPE4','NAXIS4'] :
+         try :
+            if header.count( keyword ) > 0 :
+                print("DEBUG : removing keyword |%s|" % (keyword))
+                # fits[0].header.remove( keyword )
+                hdu_list[0].header.remove( keyword )
+                removed = True
+         except :
+            print("WARNING : could not remove keyword = %s" % (keyword))
+            
+            
+      if removed : 
+         data2=image_data[0,0].copy()
+         hdu_list[0].data=data2
+
+      wcs = WCS( hdu_list[0].header )
+      dim = wcs.naxis
+      naxes = header['NAXIS']
+      
+      print("DEBUG2 : dim = %d vs. naxes = %d (after removal)" % (dim,naxes))
+
+
+#   image_data = fits.getdata(filename)
+   image_data = hdu_list[0].data
    if image_data.ndim >= 4 :
-      image_data = fits.getdata(filename)[0,0]
-   print(type(image_data))
-   print(image_data.shape)
+       image_data = hdu_list[0].data[0,0]
+#      image_data = fits.getdata(filename)[0,0]
+#   print(type(image_data))
+#   print(image_data.shape)
 
    if options.window is not None : 
       print("Using only sub-window (%d,%d)-(%d,%d) of the full image" % (options.window[0],options.window[1],options.window[2],options.window[3]))

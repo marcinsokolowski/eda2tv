@@ -255,8 +255,9 @@ do
       fi
     
       # also does (XX+YY) -> I :
-      echo "miriad_applycal_and_image_list.sh uvfits_list chan_${freq_ch} ${imsize}"
-      miriad_applycal_and_image_list.sh uvfits_list chan_${freq_ch} ${imsize}
+      # convert every ${movie_png_rate} image to png 
+      echo "miriad_applycal_and_image_list.sh uvfits_list chan_${freq_ch} ${imsize} - - ${movie_png_rate}"
+      miriad_applycal_and_image_list.sh uvfits_list chan_${freq_ch} ${imsize} - - ${movie_png_rate}
       
       prev_path=`pwd`
       cd images/
@@ -283,8 +284,8 @@ echo "cp merged_hdf5_list.txt merged_hdf5_list.last_processed"
 cp merged_hdf5_list.txt merged_hdf5_list.last_processed
 
 if [[ $n_new_processed -gt 0 ]]; then
-   echo "eda2tv_make_movie.sh ${freq_ch} ${station_name} ${movie_png_rate}"
-   eda2tv_make_movie.sh ${freq_ch} ${station_name} ${movie_png_rate}
+   echo "eda2tv_make_movie.sh ${freq_ch} ${station_name}" # ${movie_png_rate}"
+   eda2tv_make_movie.sh ${freq_ch} ${station_name} # ${movie_png_rate} not used here, but at level of conversion from FITS to jpg 
 else
    echo "WARNING : no new files processed -> nothing to copy to www server"
 fi   

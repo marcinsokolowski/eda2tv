@@ -4,6 +4,8 @@ from __future__ import print_function
 import astropy.io.fits as pyfits
 from astropy.coordinates import SkyCoord, EarthLocation
 from astropy.time import Time
+import optparse
+
 
 # TEMPORARY ???
 from astropy.utils.iers import conf
@@ -40,115 +42,116 @@ def mkdir_p(path):
          pass
       else: raise
                                             
-def usage():
-   print("fixCoordHdr.py FITS_FILE LST_HOURS" % out_fitsname)
-   print("\n")
-   print("-d : increases verbose level")
-   print("-h : prints help and exists")
-   print("-g : produce gif of (channel-avg) for all integrations")
-
-# functions :
-def parse_command_line():
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "hvdg", ["help", "verb", "debug", "gif"])
-    except getopt.GetoptError as err:
-        # print help information and exit:
-        print(str(err)) # will print something like "option -a not recognized"
-        usage()
-        sys.exit(2)
-
-    for o, a in opts:
-        if o in ("-d","--debug"):
-            debug += 1
-        if o in ("-v","--verb"):
-            debug += 1
-        if o in ("-g","--gif"):
-            do_gif = 1
-        elif o in ("-h", "--help"):
-            usage()
-            sys.exit()
-        else:
-            assert False, "unhandled option"
-    # ...
-
-# 
-if len(sys.argv) > 1:
-   fitsname = sys.argv[1]
-
-lst_hours=-100 # by default LST is automatically calculated from FITS file
-if len(sys.argv) > 2:
-   lst_hours = float(sys.argv[2])
-
-remove_axis=False
-if len(sys.argv) > 3:
-   remove_axis = ( int(sys.argv[3]) > 0 )
-
-
-
-deg2rad=math.pi/180.00
-lat_deg=-26.703319
-lat_radian=lat_deg*deg2rad
+def parse_options(idx=0):
+   parser=optparse.OptionParser()
+   parser.set_usage("""fixCoordHdr.py FITS_FILE --remove_keywords""")
    
-print("####################################################")
-print("PARAMTERS :")
-print("####################################################")
-print("fitsname       = %s"   % fitsname)
-print("lst            = %.8f [hours]" % lst_hours)
-print("lat            = %.4f [deg] = %.4f [rad]" % (lat_deg,lat_radian))
-print("remove axis    = %s" % (remove_axis))
-print("####################################################")
+   parser.add_option('-r','-R','--remove_axis',dest="remove_axis",default=True, action="store_true", help="Remove axis 3 and 4 keywords [default %default]")
+   parser.add_option('-l','-L','--lst_hours',dest="lst_hours",default=-100,help="LST [hours] [default %default]");
 
-fits = pyfits.open(fitsname)
-x_size=fits[0].header['NAXIS1']
-# channels=100
-y_size=fits[0].header['NAXIS2']
+   (options,args) = parser.parse_args( sys.argv[idx:] )
 
-if remove_axis :
-   fits[0].header['NAXIS'] = 2
-   fits[0].header.remove('NAXIS3')
-   fits[0].header.remove('NAXIS4')
+   return (options,args)
 
-if lst_hours < 0 :
-   dateobs=fits[0].header['DATE-OBS']
-   print("LST hours parameter = %.4f [h] < 0 -> getting lst from fits file automatically using DATE-OBS = %s UTC" % (lst_hours,dateobs))
-   MWA_POS=EarthLocation.from_geodetic(lon="116:40:14.93",lat="-26:42:11.95",height=377.8)
-   t = Time( dateobs, scale='utc', location=(MWA_POS.lon.value, MWA_POS.lat.value ))
-   lst_hours = t.sidereal_time('apparent').value
-   print("Lst hours from dateobs = %s -> lst = %.8f [h]" % (dateobs,lst_hours))
 
-ra_center_deg=fits[0].header['CRVAL1']
-dec_center_deg=fits[0].header['CRVAL2']
+if __name__ == '__main__':
+   # 
+   if len(sys.argv) > 1:
+      fitsname = sys.argv[1]
 
-dec_center_rad=dec_center_deg*deg2rad
-ra_center_rad=ra_center_deg*deg2rad
-ra_center_h=ra_center_deg/15.0
+#   lst_hours=-100 # by default LST is automatically calculated from FITS file
+#   if len(sys.argv) > 2:
+#      lst_hours = float(sys.argv[2])
+      
+   (options,args) = parse_options(1)   
+   lst_hours = options.lst_hours
+   remove_axis = options.remove_axis
+   
 
-ha_hours=lst_hours-(ra_center_deg/15.00)
-ha_radians=(ha_hours*15.00)*deg2rad
 
-print("values = %.8f %.8f %.8f , %.8f" % (lat_radian,ra_center_rad,dec_center_rad,ha_radians))
-cosZ=math.sin(lat_radian)*math.sin(dec_center_rad) + math.cos(lat_radian)*math.cos(dec_center_rad)*math.cos(ha_radians)
-tanZ=math.sqrt(1.00-cosZ*cosZ)/cosZ
+   deg2rad=math.pi/180.00
+   lat_deg=-26.703319
+   lat_radian=lat_deg*deg2rad
+   
+   print("####################################################")
+   print("PARAMTERS :")
+   print("####################################################")
+   print("fitsname       = %s"   % fitsname)
+   print("lst            = %.8f [hours]" % lst_hours)
+   print("lat            = %.4f [deg] = %.4f [rad]" % (lat_deg,lat_radian))
+   print("remove axis    = %s" % (remove_axis))
+   print("####################################################")
 
-print("tanZ = %.8f" % tanZ)
+   fits = pyfits.open(fitsname)
+   x_size=fits[0].header['NAXIS1']
+   # channels=100
+   y_size=fits[0].header['NAXIS2']
 
-# Parallactic angle
-# http://www.gb.nrao.edu/~rcreager/GBTMetrology/140ft/l0058/gbtmemo52/memo52.html
-tan_chi=math.sin(ha_radians)/( math.cos(dec_center_rad)*math.tan(lat_radian) - math.sin(dec_center_rad)*math.sin(ha_radians)  ) 
+#   if remove_axis :
+#      fits[0].header['NAXIS'] = 2
+#      fits[0].header.remove('NAXIS3')
+#      fits[0].header.remove('NAXIS4')
 
-# $lat_radian $dec_radian $ha_radian
-print("values2 : %.8f %.8f %.8f" % (lat_radian,dec_center_rad,ha_radians))
-chi_radian=math.atan2( math.sin(ha_radians) , math.cos(dec_center_rad)*math.tan(lat_radian) - math.sin(dec_center_rad)*math.cos(ha_radians) )
+   if lst_hours < 0 :
+      dateobs=fits[0].header['DATE-OBS']
+      print("LST hours parameter = %.4f [h] < 0 -> getting lst from fits file automatically using DATE-OBS = %s UTC" % (lst_hours,dateobs))
+      MWA_POS=EarthLocation.from_geodetic(lon="116:40:14.93",lat="-26:42:11.95",height=377.8)
+      t = Time( dateobs, scale='utc', location=(MWA_POS.lon.value, MWA_POS.lat.value ))
+      lst_hours = t.sidereal_time('apparent').value
+      print("Lst hours from dateobs = %s -> lst = %.8f [h]" % (dateobs,lst_hours))
 
-print("chi_radian = %.8f" % chi_radian)
+   ra_center_deg=fits[0].header['CRVAL1']
+   dec_center_deg=fits[0].header['CRVAL2']
 
-# there is a - sign in the paper, but Randall says it's possibly wrong:
-# so I stay with NO - SIGN version
-xi=tanZ*math.sin(chi_radian)
-eta=tanZ*math.cos(chi_radian)
+   dec_center_rad=dec_center_deg*deg2rad
+   ra_center_rad=ra_center_deg*deg2rad
+   ra_center_h=ra_center_deg/15.0
 
-fits[0].header['PV2_1'] = xi
-fits[0].header['PV2_2'] = eta
+   ha_hours=lst_hours-(ra_center_deg/15.00)
+   ha_radians=(ha_hours*15.00)*deg2rad
+
+   print("values = %.8f %.8f %.8f , %.8f" % (lat_radian,ra_center_rad,dec_center_rad,ha_radians))
+   cosZ=math.sin(lat_radian)*math.sin(dec_center_rad) + math.cos(lat_radian)*math.cos(dec_center_rad)*math.cos(ha_radians)
+   tanZ=math.sqrt(1.00-cosZ*cosZ)/cosZ
+
+   print("tanZ = %.8f" % tanZ)
+
+   # Parallactic angle
+   # http://www.gb.nrao.edu/~rcreager/GBTMetrology/140ft/l0058/gbtmemo52/memo52.html
+   tan_chi=math.sin(ha_radians)/( math.cos(dec_center_rad)*math.tan(lat_radian) - math.sin(dec_center_rad)*math.sin(ha_radians)  ) 
+
+   # $lat_radian $dec_radian $ha_radian
+   print("DEBUG : values2 : %.8f %.8f %.8f" % (lat_radian,dec_center_rad,ha_radians))
+   chi_radian=math.atan2( math.sin(ha_radians) , math.cos(dec_center_rad)*math.tan(lat_radian) - math.sin(dec_center_rad)*math.cos(ha_radians) )
+
+   print("chi_radian = %.8f" % chi_radian)
+
+   # there is a - sign in the paper, but Randall says it's possibly wrong:
+   # so I stay with NO - SIGN version
+   xi=tanZ*math.sin(chi_radian)
+   eta=tanZ*math.cos(chi_radian)
+
+   fits[0].header['PV2_1'] = xi
+   fits[0].header['PV2_2'] = eta
+   header = fits[0].header
+
+   if options.remove_axis :
+      removed = False
+      for keyword in ['CUNIT3','CDELT3','CRVAL3','CRPIX3','CTYPE3','NAXIS3','CUNIT4','CDELT4','CRVAL4','CRPIX4','CTYPE4','NAXIS4'] :
+         try :
+            if header.count( keyword ) > 0 :
+                print("DEBUG : removing keyword |%s|" % (keyword))
+                # fits[0].header.remove( keyword )
+                header.remove( keyword )
+                removed = True
+         except :
+            print("WARNING : could not remove keyword = %s" % (keyword))
+            
+      if removed : 
+         data2=fits[0].data[0,0].copy()
+         fits[0].data=data2
+
+
 
 # CTYPE1  = 'RA---SIN'
 # CRVAL1  =   1.193772717790E+02
@@ -162,7 +165,8 @@ fits[0].header['PV2_2'] = eta
 # CUNIT2  = 'deg     '
 
 
-print("Writing xi = %.8f and eta = %.8f to fits header %s" % (xi,eta,fitsname))
-fits.writeto( fitsname, overwrite=True ) 
+   print("Writing xi = %.8f and eta = %.8f to fits header %s" % (xi,eta,fitsname))
+   fits.writeto( fitsname, overwrite=True ) 
+    
 
 
