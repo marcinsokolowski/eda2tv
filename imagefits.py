@@ -61,7 +61,8 @@ def parse_options(idx):
    parser.add_option('--dpi',dest="dpi",default=25, help="Image DPI [default %default]",type="int")
    parser.add_option('--out_format','--out_type','--ext','--out_image_type',dest="image_format",default="jpg", help="Output image type [default %default]")
    parser.add_option('--reg_postfix','--reg_ext',dest="reg_postfix",default=".reg",help="Region file to use [default %default]")
-   parser.add_option('--fits_list','--list_file','--list','--fitslist',dest="fitslist_file",default=None, help="FITS list file [default %]")
+   parser.add_option('--fits_list','--list_file','--list','--fitslist',dest="fitslist_file",default=None, help="FITS list file [default %default]")
+   parser.add_option('--every_n_fits',dest="every_n_fits",default=1,help="Every N-th file to be converted [default %default",type="int")
    
    (options,args) = parser.parse_args(sys.argv[2:])
    
@@ -115,14 +116,24 @@ if __name__ == '__main__':
 
    (options,args) = parse_options(0)
    
+   print("###########################################")
+   print("PARAMETERS :")
+   print("###########################################")
+   print("Every N-th file = %d" % (options.every_n_fits))
+   print("###########################################")
+   
    fits_list=[]
    if options.fitslist_file is not None :
       fits_list=read_list( options.fitslist_file )      
    else :
       fits_list.append(filename)
          
-   
+   idx=0      
    for filename in fits_list :       
+      if (idx % options.every_n_fits) != 0 :
+         print("DEBUG : idx = %d -> skipped (due to modulo %d required)" % (idx,options.every_n_fits))
+         continue
+   
       jpgfile=filename.replace('.fits', '.'+options.image_format )
       regfile=filename.replace('.fits', options.reg_postfix )
 
@@ -266,6 +277,7 @@ if __name__ == '__main__':
       jpg_path=options.outdir + "/" + jpgfile
       plt.savefig( jpg_path , format = options.image_format, dpi = fig.dpi)
       print("DEBUG : saved file %s" % (jpg_path))
+      idx += 1
 
 
    end_time = time.time()
