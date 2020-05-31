@@ -1,6 +1,7 @@
 #!/bin/bash
 
 start_ux=`date +%s`
+date
 
 freq_ch=204
 if [[ -n "$1" && "$1" != "-" ]]; then
