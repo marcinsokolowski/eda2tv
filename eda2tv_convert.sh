@@ -120,10 +120,28 @@ if [[ $voltages -gt 0 ]]; then
    touch merged_hdf5_list.last_processed
    diff merged_hdf5_list.txt merged_hdf5_list.last_processed | awk '{if($1=="<"){print $2;}}' > new_merged_hdf5_list.txt
 else
+   # workaround correlation_burst_204_20200530_23500_1.hdf5 - no %05d.hdf5 !!!
+   rm -f tmp_correlation_files_list.txt
+   i=0
+   found=1
+   while [[ 1 ]]; 
+   do
+      hdf5file=`ls correlation_burst_*_${i}.hdf5 | tail -1`
+      if [[ -s $hdf5file ]]; then
+         echo $hdf5file >> tmp_correlation_files_list.txt
+      else
+         echo "File $hdf5file does not exist -> exiting loop"
+         break
+      fi
+      i=$(($i+1))
+   done
+
+
    if [[ $use_full_files -gt 0 ]]; then      
-      count=`ls -tr correlation_burst_*hdf5 | wc -l`
+      count=`ls -tr correlation_burst_*hdf5 | wc -l`      
+      
       if [[ $count -ge 2 ]]; then
-         last_corr_file=`ls -tr correlation_burst_*hdf5 | tail -2 | head -1` 
+         last_corr_file=`cat tmp_correlation_files_list.txt | tail -2 | head -1` 
          echo "Last correlated file = $last_corr_file"
 
          # TODO - change for making a copy of the last 30 seconds (see my plan)   
@@ -140,7 +158,7 @@ else
             echo "rm -f new_merged_hdf5_list.txt"
             rm -f new_merged_hdf5_list.txt
             
-            for hdf5file_full_path in `ls -tr ../correlation_burst_*hdf5`
+            for hdf5file_full_path in `cat ../tmp_correlation_files_list.txt`
             do
                hdf5file=`basename ${hdf5file_full_path}`
                
@@ -153,6 +171,13 @@ else
                else
                   echo "INFO : line ${hdf5file} already exists -> skipped"
                fi
+               
+               if [[ $hdf5file == $last_corr_file ]]; then
+                  echo "Last full HDF5 file is $last_corr_file -> no more links created -> exiting loop"
+                  break
+               else
+                  echo "Created link to ../${hdf5file} for processing"
+               fi
             done
          fi
          pwd
@@ -162,7 +187,7 @@ else
          exit;
       fi
    else
-      last_corr_file=`ls -tr correlation_burst_*hdf5 | tail -1`
+      last_corr_file=`cat tmp_correlation_files_list.txt | tail -1`
       echo "Last correlated file = $last_corr_file"
 
       # TODO - change for making a copy of the last 30 seconds (see my plan)   
