@@ -132,6 +132,8 @@ if __name__ == '__main__':
    idx=0      
    for filename in fits_list :       
       if (idx % options.every_n_fits) == 0 :   
+         file_start_time=time.time()
+      
          jpgfile=filename.replace('.fits', '.'+options.image_format )
          regfile=filename.replace('.fits', options.reg_postfix )
 
@@ -275,7 +277,10 @@ if __name__ == '__main__':
          # plt.plotfile(filename,(0,1),delimiter=" ",names="Frequency [MHz],T[K]",newfig=False)
          jpg_path=options.outdir + "/" + jpgfile
          plt.savefig( jpg_path , format = options.image_format, dpi = fig.dpi)
-         print("DEBUG : saved file %s" % (jpg_path))
+         file_end_time=time.time()
+         
+         print("DEBUG : saved file %s (processing took %.4f [seconds])" % (jpg_path,(file_end_time-file_start_time)))
+         
       else :
          print("DEBUG : idx = %d -> skipped (due to modulo %d required)" % (idx,options.every_n_fits))
          
