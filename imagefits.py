@@ -277,6 +277,7 @@ if __name__ == '__main__':
          # plt.plotfile(filename,(0,1),delimiter=" ",names="Frequency [MHz],T[K]",newfig=False)
          jpg_path=options.outdir + "/" + jpgfile
          plt.savefig( jpg_path , format = options.image_format, dpi = fig.dpi)
+         plt.close('all')
          file_end_time=time.time()
          
          print("DEBUG : saved file %s (processing took %.4f [seconds])" % (jpg_path,(file_end_time-file_start_time)))
