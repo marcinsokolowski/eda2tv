@@ -12,7 +12,8 @@ if [[ -n "$2" && "$2" != "-" ]]; then
 fi
 
 # 10:15:38 , 7:18:39 
-name=cand1015+07
+# name=cand1015+07 # echo 153.23342 -7.9 | awk '{h=int($1/15.00);m=(($1/15.00)-h)*60.00;dec_deg=int($2);printf("%d%d%03d\n",h,m,dec_deg);}'
+name=`echo "$ra $dec" | awk '{h=int($1/15.00);m=(($1/15.00)-h)*60.00;dec_deg=int($2);printf("cand%d%d%03d\n",h,m,dec_deg);}'`
 if [[ -n "$3" && "$3" != "-" ]]; then
    name=$3
 fi
@@ -23,6 +24,9 @@ if [[ -n "$4" && "$4" != "-" ]]; then
    list=$4
 fi
 
+min_elevation=15
+radius_deg=3
+
 export PATH=~/Software/eda2tv/source_finder/:$PATH
 
 path=`which dump_pixel_radec.py`
@@ -30,8 +34,8 @@ path=`which dump_pixel_radec.py`
 
 # ls *_I.fits > fits_list_I_tmp
 
-echo "python $path $list --ra=${ra} --dec=${dec} --calc_rms --outfile=sgr1935+2154.txt --min_elevation=15 --radius=3"
-python $path $list --ra=${ra} --dec=${dec} --calc_rms --outfile=sgr1935+2154.txt --min_elevation=15 --radius=3
+echo "python $path $list --ra=${ra} --dec=${dec} --calc_rms --outfile=${name}.txt --min_elevation=${min_elevation} --radius=${radius_deg}"
+python $path $list --ra=${ra} --dec=${dec} --calc_rms --outfile=${name}.txt --min_elevation=${min_elevation} --radius=${radius_deg}
 
 # echo "rm -f fits_list_I_tmp"
 # rm -f fits_list_I_tmp
