@@ -114,6 +114,7 @@ if __name__ == '__main__':
    print("####################################################")
 
    for fitsname in fitslist :
+      lst_hours = options.lst_hours      
       fits = pyfits.open(fitsname)
       x_size=fits[0].header['NAXIS1']
       # channels=100
@@ -124,7 +125,7 @@ if __name__ == '__main__':
 #         fits[0].header.remove('NAXIS3')
 #         fits[0].header.remove('NAXIS4')
 
-      if lst_hours < 0 :
+      if lst_hours < 0 or len(fitslist)>1 :
          dateobs=fits[0].header['DATE-OBS']
          print("LST hours parameter = %.4f [h] < 0 -> getting lst from fits file automatically using DATE-OBS = %s UTC" % (lst_hours,dateobs))
          MWA_POS=EarthLocation.from_geodetic(lon="116:40:14.93",lat="-26:42:11.95",height=377.8)
