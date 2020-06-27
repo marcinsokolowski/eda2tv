@@ -161,9 +161,10 @@ for fitsfile_bytes in fitslist_data :
 
    
    (x_c0,y_c0) = sky2pix.sky2pix( fits, options.ra, options.dec )
-   
-   x_c0_new = x_c0 + 1
-   y_c0_new = y_c0 + 1
+
+   # this is because function sky2pix.sky2pix returns values directly as in ds9 (same WCS) , so for python/C code subtraction of 1 is needed :   
+   x_c0_new = x_c0 - 1
+   y_c0_new = y_c0 - 1
    
    print("Read FITS file %s has dateobs = %s -> %.2f unixtime , (%.4f,%.4f) [deg] -> (%.2f,%.2f) [pixels in ds9 convention] -> (%.2f,%.2f) [pixels in python/C convention]" % (fitsfile,dateobs,t_unix.value,options.ra,options.dec,x_c0,y_c0,x_c0_new,y_c0_new))
    
