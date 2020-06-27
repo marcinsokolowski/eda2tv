@@ -63,6 +63,9 @@ parser.add_option("--rms_outer_radius",dest="rms_outer_radius",default=10,help="
 parser.add_option("--verbose","-v","--verb",dest="verbose",default=0,help="Verbosity level [default: %default]",type="int")
 
 parser.add_option("--outfile","-o",dest="outfile",default="pixel.txt",help="Output file name [default:]",type="string")
+parser.add_option('--all','--force_all',dest="force_all",action="store_true",default=False, help="Force all (ignore last file) [default %s]")
+
+
 # parser.add_option('--use_max_flux','--use_max_peak_flux','--max_flux',dest="use_max_peak_flux",action="store_true",default=False, help="Use maximum flux value around the source center [default %]")
 # parser.add_option('--idx','--index','--raw',dest="use_raw_value",action="store_true",default=False, help="Use image index [default %s]")
 (options,args)=parser.parse_args(sys.argv[1:])
@@ -75,6 +78,7 @@ print("Finding maximum pixel around position (ra,dec) = (%.4f,%.4f) in radius %d
 print("RMS calculation inner and outer radius : %d / %d pixels" % (options.rms_inner_radius,options.rms_outer_radius))
 print("outfile = %s" % (options.outfile))
 print("min_elevation = %.4f [deg]" % (options.min_elevation))
+print("force_all = %s" % (options.force_all))
 # print "use_raw_value = %s" % (options.use_raw_value)
 print("###############################################################################")
 
@@ -118,11 +122,12 @@ for fitsfile_bytes in fitslist_data :
    fitsfile = fitsfile_bytes.decode("utf-8")
    
    do_write = True
-   if last_processed_fitsname is not None and fitsfile < last_processed_fitsname :
-      print("File %s < last processed = %s" % (fitsfile,last_processed_fitsname))
-      if fitsfile == last_processed_fitsname :
-         do_write = False # not to reapet, but read the last processed file to have difference != 0 !!!
-      continue
+   if not options.force_all : 
+      if last_processed_fitsname is not None and fitsfile < last_processed_fitsname :
+         print("File %s < last processed = %s" % (fitsfile,last_processed_fitsname))
+         if fitsfile == last_processed_fitsname :
+            do_write = False # not to reapet, but read the last processed file to have difference != 0 !!!
+         continue
       
 
    last_f = open( last_processed_filestamp , "w" )
@@ -157,7 +162,13 @@ for fitsfile_bytes in fitslist_data :
    
    (x_c0,y_c0) = sky2pix.sky2pix( fits, options.ra, options.dec )
    
-   print("Read FITS file %s has dateobs = %s -> %.2f unixtime , (%.4f,%.4f) [deg] -> (%.2f,%.2f) [pixels]" % (fitsfile,dateobs,t_unix.value,options.ra,options.dec,x_c0,y_c0))
+   x_c0_new = x_c0 + 1
+   y_c0_new = y_c0 + 1
+   
+   print("Read FITS file %s has dateobs = %s -> %.2f unixtime , (%.4f,%.4f) [deg] -> (%.2f,%.2f) [pixels in ds9 convention] -> (%.2f,%.2f) [pixels in python/C convention]" % (fitsfile,dateobs,t_unix.value,options.ra,options.dec,x_c0,y_c0,x_c0_new,y_c0_new))
+   
+   x_c0 = x_c0_new
+   y_c0 = y_c0_new
    
 #   x_c = int( numpy.round(x_c0) )
 #   y_c = int( numpy.round(y_c0) )

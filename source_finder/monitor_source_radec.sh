@@ -24,6 +24,12 @@ if [[ -n "$4" && "$4" != "-" ]]; then
    list=$4
 fi
 
+options=""
+if [[ -n "$5" && "$5" != "-" ]]; then
+   options=$5
+fi
+
+
 min_elevation=15
 radius_deg=3
 
@@ -34,8 +40,8 @@ path=`which dump_pixel_radec.py`
 
 # ls *_I.fits > fits_list_I_tmp
 
-echo "python $path $list --ra=${ra} --dec=${dec} --calc_rms --outfile=${name}.txt --min_elevation=${min_elevation} --radius=${radius_deg}"
-python $path $list --ra=${ra} --dec=${dec} --calc_rms --outfile=${name}.txt --min_elevation=${min_elevation} --radius=${radius_deg}
+echo "python $path $list --ra=${ra} --dec=${dec} --calc_rms --outfile=${name}.txt --min_elevation=${min_elevation} --radius=${radius_deg} ${options}"
+python $path $list --ra=${ra} --dec=${dec} --calc_rms --outfile=${name}.txt --min_elevation=${min_elevation} --radius=${radius_deg} ${options}
 
 # echo "rm -f fits_list_I_tmp"
 # rm -f fits_list_I_tmp
