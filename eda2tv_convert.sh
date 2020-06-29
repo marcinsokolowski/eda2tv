@@ -109,8 +109,11 @@ if [[ $voltages -gt 0 ]]; then
    cd merged
 
    # update a list of merged HDF5 files :
+# WARNING : for now assuming not so many HDF5 files will be produced :   
    echo "ls *.hdf5 > merged_hdf5_list.txt"
    ls *.hdf5 > merged_hdf5_list.txt
+#   echo "find .  -maxdepth 1  -name \"*.hdf5\" | awk '{print substr($1,3);}' > merged_hdf5_list.txt"
+#   find .  -maxdepth 1  -name "*.hdf5" | awk '{print substr($1,3);}' > merged_hdf5_list.txt
 
    touch processed.txt
 
@@ -230,6 +233,7 @@ if [[ $reprocess_all -gt 0 ]]; then
    rm -f new_merged_hdf5_list.txt
    
    for hdf5file in `ls -tr ../*.hdf5`
+#   for hdf5file in `find .  -maxdepth 1  -name "*.hdf5" | awk '{print substr($1,3);}' > merged_hdf5_list.txt`
    do
       echo "ln -s ${hdf5file}"
       ln -s ${hdf5file}
@@ -258,7 +262,9 @@ do
          echo "hdf5_to_uvfits_all.sh -c -l -i $inttime -n $n_avg -d \"./\" -N -z -f $freq_ch -l -L new_hdf5_list.txt -s ${station_name} $convert_options"   
          hdf5_to_uvfits_all.sh -c -l -i $inttime -n $n_avg -d "./" -N -z -f $freq_ch -l -L new_hdf5_list.txt -s ${station_name} $convert_options
          
-         ls *.uvfits > uvfits_list
+#         ls *.uvfits > uvfits_list
+         echo "find .  -maxdepth 1  -name \"*.uvfits\" | awk '{print substr($1,3);}' > uvfits_list"
+         find .  -maxdepth 1  -name "*.uvfits" | awk '{print substr($1,3);}' > uvfits_list
 
          n_new_processed=$(($n_new_processed+1))
       else 
@@ -270,12 +276,16 @@ do
          hdf5_to_uvfits_all.sh -c -l -i $inttime -n $n_avg -d "./" -N -z -a 1 -f $freq_ch -L new_hdf5_list.txt -S 0 -s ${station_name} $convert_options
          
          if [[ $process_all -le 0 ]]; then
-            ls *.uvfits > uvfits_list
+#            ls *.uvfits > uvfits_list
+             echo "find .  -maxdepth 1  -name \"*.uvfits\" | awk '{print substr($1,3);}' > uvfits_list"
+             find .  -maxdepth 1  -name "*.uvfits" | awk '{print substr($1,3);}' > uvfits_list
          else
             if [[ $process_all -le 1 ]]; then
-               ls *.uvfits | tail -2 > uvfits_list
+#               ls *.uvfits | tail -2 > uvfits_list
+               find .  -maxdepth 1  -name "*.uvfits" | awk '{print substr($1,3);}' | tail -2 > uvfits_list
             else
-               ls *.uvfits | awk -v m=${process_all} '{if((NR % m)==0){print $0;}}' > uvfits_list
+#               ls *.uvfits | awk -v m=${process_all} '{if((NR % m)==0){print $0;}}' > uvfits_list
+               find .  -maxdepth 1  -name "*.uvfits" | awk '{print substr($1,3);}' | awk -v m=${process_all} '{if((NR % m)==0){print $0;}}' > uvfits_list
             fi
          fi
          
@@ -290,6 +300,8 @@ do
       prev_path=`pwd`
       cd images/
       last_image=`ls -tr *.png | tail -1`
+# WARNING : how to do -tr with find ???      
+#      last_image=`find .  -maxdepth 1  -name "*.uvfits" | awk '{print substr($1,3);}' 
       echo "Last image = $last_image"
    
       if [[ $publish -gt 0 ]]; then
