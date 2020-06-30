@@ -40,8 +40,8 @@ path=`which dump_pixel_radec.py`
 
 # ls *_I.fits > fits_list_I_tmp
 
-echo "python $path $list --ra=${ra} --dec=${dec} --calc_rms --outfile=${name}.txt --min_elevation=${min_elevation} --radius=${radius_deg} ${options}"
-python $path $list --ra=${ra} --dec=${dec} --calc_rms --outfile=${name}.txt --min_elevation=${min_elevation} --radius=${radius_deg} ${options}
+echo "python $path $list --ra=${ra} --dec=${dec} --calc_rms --outfile=${name}.txt --min_elevation=${min_elevation} --radius=${radius_deg} --last_processed_filestamp=${name}.last_processed_file ${options}"
+python $path $list --ra=${ra} --dec=${dec} --calc_rms --outfile=${name}.txt --min_elevation=${min_elevation} --radius=${radius_deg} --last_processed_filestamp=${name}.last_processed_file ${options}
 
 # echo "rm -f fits_list_I_tmp"
 # rm -f fits_list_I_tmp

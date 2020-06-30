@@ -43,7 +43,7 @@ def mkdir_p(path):
 # CONSTANTS :
 MWA_POS=EarthLocation.from_geodetic(lon="116:40:14.93",lat="-26:42:11.95",height=377.8)
 
-last_processed_filestamp = "dump_pixel_radec.last_processed"
+# last_processed_filestamp = "dump_pixel_radec.last_processed"
 
 fitslist="list"
 if len(sys.argv) > 1:
@@ -64,6 +64,9 @@ parser.add_option("--verbose","-v","--verb",dest="verbose",default=0,help="Verbo
 
 parser.add_option("--outfile","-o",dest="outfile",default="pixel.txt",help="Output file name [default:]",type="string")
 parser.add_option('--all','--force_all',dest="force_all",action="store_true",default=False, help="Force all (ignore last file) [default %s]")
+
+
+parser.add_option("--last_processed_filestamp","--last_file",'--last_processed_file',dest="last_processed_filestamp",default="dump_pixel_radec.last_processed",help="Last processed filename [default %default]",type="string")
 
 
 # parser.add_option('--use_max_flux','--use_max_peak_flux','--max_flux',dest="use_max_peak_flux",action="store_true",default=False, help="Use maximum flux value around the source center [default %]")
@@ -100,8 +103,8 @@ if b_header :
 
 # READ last processed file :
 last_processed_fitsname = None
-if os.path.exists( last_processed_filestamp ) :
-    file=open( last_processed_filestamp ,'r')
+if os.path.exists( options.last_processed_filestamp ) :
+    file=open( options.last_processed_filestamp ,'r')
     
     # reads the entire file into a list of strings variable data :
     data=file.readlines()
@@ -130,10 +133,10 @@ for fitsfile_bytes in fitslist_data :
          continue
       
 
-   last_f = open( last_processed_filestamp , "w" )
+   last_f = open( options.last_processed_filestamp , "w" )
    last_f.write( fitsfile + "\n" )
    last_f.close()
-   print("DEBUG : saved last processed fits name %s to file %s" % (fitsfile,last_processed_filestamp))
+   print("DEBUG : saved last processed fits name %s to file %s" % (fitsfile,options.last_processed_filestamp))
    
   
    print("Reading fits file %s" % (fitsfile))
