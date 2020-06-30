@@ -67,7 +67,7 @@ parser.add_option('--all','--force_all',dest="force_all",action="store_true",def
 
 
 parser.add_option("--last_processed_filestamp","--last_file",'--last_processed_file',dest="last_processed_filestamp",default="dump_pixel_radec.last_processed",help="Last processed filename [default %default]",type="string")
-
+parser.add_option('--overwrite',dest="overwrite",default=False,action="store_true",help="Overwrite [default %default]")
 
 # parser.add_option('--use_max_flux','--use_max_peak_flux','--max_flux',dest="use_max_peak_flux",action="store_true",default=False, help="Use maximum flux value around the source center [default %]")
 # parser.add_option('--idx','--index','--raw',dest="use_raw_value",action="store_true",default=False, help="Use image index [default %s]")
@@ -83,6 +83,7 @@ print("outfile = %s" % (options.outfile))
 print("min_elevation = %.4f [deg]" % (options.min_elevation))
 print("force_all = %s" % (options.force_all))
 # print "use_raw_value = %s" % (options.use_raw_value)
+print("overwrite = %s" % (options.overwrite))
 print("###############################################################################")
 
 
@@ -94,7 +95,12 @@ b_header = False
 if not os.path.exists( options.outfile ) :
    b_header = True
 
-out_file=open(options.outfile,"a+")
+out_file=None
+if options.overwrite :
+   out_file=open(options.outfile,"w")
+   b_header = True
+else :
+   out_file=open(options.outfile,"a+")
 # line = ( "%.4f %.4f %.4f %d %d %.4f %s\n" % (t_unix.value,max_value,pixel_value,x_c,y_c,rms,fitsfile))
 
 if b_header :
