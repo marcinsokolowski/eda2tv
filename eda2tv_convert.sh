@@ -263,8 +263,8 @@ do
          hdf5_to_uvfits_all.sh -c -l -i $inttime -n $n_avg -d "./" -N -z -f $freq_ch -l -L new_hdf5_list.txt -s ${station_name} $convert_options
          
 #         ls *.uvfits > uvfits_list
-         echo "find .  -maxdepth 1  -name \"*.uvfits\" | awk '{print substr($1,3);}' > uvfits_list"
-         find .  -maxdepth 1  -name "*.uvfits" | awk '{print substr($1,3);}' > uvfits_list
+         echo "find .  -maxdepth 1  -name \"*.uvfits\" | awk '{print substr($1,3);}' | sort > uvfits_list"
+         find .  -maxdepth 1  -name "*.uvfits" | awk '{print substr($1,3);}'  | sort > uvfits_list
 
          n_new_processed=$(($n_new_processed+1))
       else 
@@ -277,15 +277,15 @@ do
          
          if [[ $process_all -le 0 ]]; then
 #            ls *.uvfits > uvfits_list
-             echo "find .  -maxdepth 1  -name \"*.uvfits\" | awk '{print substr($1,3);}' > uvfits_list"
-             find .  -maxdepth 1  -name "*.uvfits" | awk '{print substr($1,3);}' > uvfits_list
+             echo "find .  -maxdepth 1  -name \"*.uvfits\" | awk '{print substr($1,3);}' | sort > uvfits_list"
+             find .  -maxdepth 1  -name "*.uvfits" | awk '{print substr($1,3);}' | sort > uvfits_list
          else
             if [[ $process_all -le 1 ]]; then
 #               ls *.uvfits | tail -2 > uvfits_list
-               find .  -maxdepth 1  -name "*.uvfits" | awk '{print substr($1,3);}' | tail -2 > uvfits_list
+               find .  -maxdepth 1  -name "*.uvfits" | awk '{print substr($1,3);}' | sort | tail -2 > uvfits_list
             else
 #               ls *.uvfits | awk -v m=${process_all} '{if((NR % m)==0){print $0;}}' > uvfits_list
-               find .  -maxdepth 1  -name "*.uvfits" | awk '{print substr($1,3);}' | awk -v m=${process_all} '{if((NR % m)==0){print $0;}}' > uvfits_list
+               find .  -maxdepth 1  -name "*.uvfits" | awk '{print substr($1,3);}' | sort | awk -v m=${process_all} '{if((NR % m)==0){print $0;}}' > uvfits_list
             fi
          fi
          
