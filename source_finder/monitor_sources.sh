@@ -23,8 +23,8 @@ monitor_source_radec.sh 148.28875 7.92638889 B0950+08_diff fits_list_I_diff
 echo "monitor_source_radec.sh 148.28875 7.92638889 B0950+08  fits_list_I"
 monitor_source_radec.sh 148.28875 7.92638889 B0950+08  fits_list_I
 
-echo "monitor_source_radec.sh 139.571 -12.1789 2C806 fits_list_I_diff"
-monitor_source_radec.sh 139.571 -12.1789 2C806 fits_list_I_diff
+echo "monitor_source_radec.sh 139.571 -12.1789 2C806_diff fits_list_I_diff"
+monitor_source_radec.sh 139.571 -12.1789 2C806_diff fits_list_I_diff
 
 echo "monitor_source_radec.sh 139.571 -12.1789 2C806 fits_list_I"
 monitor_source_radec.sh 139.571 -12.1789 2C806 fits_list_I
