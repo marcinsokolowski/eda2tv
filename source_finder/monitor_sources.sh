@@ -8,14 +8,26 @@ path=`which dump_pixel_radec.py`
 
 ls *_I.fits > fits_list_I_tmp
 
-echo "python $path fits_list_I_tmp --ra=293.750 --dec=21.90 --calc_rms --outfile=sgr1935+2154.txt --min_elevation=15 --radius=3 --last_processed_filestamp=sgr1935+2154.last_processed_file"
-python $path fits_list_I_tmp --ra=293.750 --dec=21.90 --calc_rms --outfile=sgr1935+2154.txt --min_elevation=15 --radius=3 --last_processed_filestamp=sgr1935+2154.last_processed_file
+# echo "python $path fits_list_I_tmp --ra=293.750 --dec=21.90 --calc_rms --outfile=sgr1935+2154.txt --min_elevation=15 --radius=3 --last_processed_filestamp=sgr1935+2154.last_processed_file"
+# python $path fits_list_I_tmp --ra=293.750 --dec=21.90 --calc_rms --outfile=sgr1935+2154.txt --min_elevation=15 --radius=3 --last_processed_filestamp=sgr1935+2154.last_processed_file
+
+echo "monitor_source_radec.sh 293.750 21.90 sgr1935+2154 fits_list_I_diff"
+monitor_source_radec.sh 293.750 21.90 sgr1935+2154 fits_list_I_diff
+
+echo "monitor_source_radec.sh 293.750 21.90 sgr1935+2154 fits_list_I"
+monitor_source_radec.sh 293.750 21.90 sgr1935+2154 fits_list_I
 
 echo "monitor_source_radec.sh 148.28875 7.92638889 B0950+08_diff fits_list_I_diff"
 monitor_source_radec.sh 148.28875 7.92638889 B0950+08_diff fits_list_I_diff 
 
 echo "monitor_source_radec.sh 148.28875 7.92638889 B0950+08  fits_list_I"
 monitor_source_radec.sh 148.28875 7.92638889 B0950+08  fits_list_I
+
+echo "monitor_source_radec.sh 139.571 -12.1789 2C806 fits_list_I_diff"
+monitor_source_radec.sh 139.571 -12.1789 2C806 fits_list_I_diff
+
+echo "monitor_source_radec.sh 139.571 -12.1789 2C806 fits_list_I"
+monitor_source_radec.sh 139.571 -12.1789 2C806 fits_list_I
 
 echo "rm -f fits_list_I_tmp"
 rm -f fits_list_I_tmp
