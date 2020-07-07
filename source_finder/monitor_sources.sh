@@ -29,6 +29,13 @@ monitor_source_radec.sh 139.571 -12.1789 2C806 fits_list_I_diff
 echo "monitor_source_radec.sh 139.571 -12.1789 2C806 fits_list_I"
 monitor_source_radec.sh 139.571 -12.1789 2C806 fits_list_I
 
+# control lightcurve of an empty patch of the sky as a sanity check and for RMS estimates :
+echo "monitor_source_radec.sh 155.075 16.87666667 OFF_B0950+08  fits_list_I"
+monitor_source_radec.sh 155.075 16.87666667 OFF_B0950+08  fits_list_I
+
+echo "monitor_source_radec.sh 155.075 16.87666667 OFF_B0950+08_diff  fits_list_I_diff"
+monitor_source_radec.sh 155.075 16.87666667 OFF_B0950+08_diff  fits_list_I_diff
+
 echo "rm -f fits_list_I_tmp"
 rm -f fits_list_I_tmp
 
