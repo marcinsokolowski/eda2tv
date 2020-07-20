@@ -28,6 +28,7 @@ from astropy.time import Time
 import optparse
 import sky2pix
 
+import calcpix
 
 def mkdir_p(path):
    try:
@@ -55,6 +56,7 @@ parser.add_option("--ra","--RA","--Ra",dest="ra",default=229.75,help="RA in degr
 parser.add_option("--dec","--DEC","--Dec",dest="dec",default=12.33333333,help="DEC in degrees [default: %default]",type="float")
 parser.add_option("--radius","-r",dest="radius",default=15,help="Find maximum pixel in radius around given position [default: %default]",type="int")
 parser.add_option("--min_alt","--min_elev","--min_elevation",dest="min_elevation",default=1.00,help="Minimum object elevation [default: %default]",type="float")
+parser.add_option('--sum','--use_sum',dest="use_sum",action="store_true",default=False, help="Use mean value in radius specified by --radius parameter [default %s]")
 
 parser.add_option('--calc_bkg','--calc_rms','--rms',dest="calc_rms",action="store_true",default=False, help="If calculate local RMS [default %s]")
 parser.add_option("--rms_inner_radius",dest="rms_inner_radius",default=5,help="RMS inner radius [default: %default]",type="int")
@@ -84,6 +86,7 @@ print("min_elevation = %.4f [deg]" % (options.min_elevation))
 print("force_all = %s" % (options.force_all))
 # print "use_raw_value = %s" % (options.use_raw_value)
 print("overwrite = %s" % (options.overwrite))
+print("use_sum   = %s" % (options.use_sum))
 print("###############################################################################")
 
 
@@ -199,6 +202,11 @@ for fitsfile_bytes in fitslist_data :
       data=fits[0].data
 
    pixel_value = data[y_c,x_c]
+   
+#   (weighted_sum,v1,v2,v3,v4) = calcpix.get_weighted_pixel_value( data, x_c , y_c )
+#   pixel_value = weighted_sum
+   
+   
    sum = pixel_value
    count = 1   
    max_val = pixel_value
@@ -206,6 +214,9 @@ for fitsfile_bytes in fitslist_data :
    max_yc  = y_c
    if options.radius > 0 :
        print("radius = %d -> finding maximum pixel around position (%d,%d)" % (options.radius,x_c,y_c))
+       
+       sum   = 0.00
+       count = 1
    
        for yy in range( y_c-options.radius , y_c+options.radius+1 ) :
            for xx in range( x_c-options.radius , x_c+options.radius+1 ) :
@@ -213,7 +224,7 @@ for fitsfile_bytes in fitslist_data :
            
                if dist < options.radius :
                    val = data[yy,xx]                   
-                   sum += val
+                   sum += val # *math.exp( -(dist*dist) ) # testing gaussian weighting 
                    count += 1
                    if val > max_val :
                        max_val = val
@@ -225,6 +236,10 @@ for fitsfile_bytes in fitslist_data :
 #           y_c = max_yc 
           
 #           print "INFO : overwritting original position (%d,%d) with position of maximum value = %.2f at (%d,%d)" % (x_c,y_c,max_val,x_c,y_c)
+
+       if count > 0 :
+          if options.use_sum :
+             pixel_value = ( sum / count )
 
    rms = -1000.00
    pixel_count = 0
