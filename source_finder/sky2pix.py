@@ -112,6 +112,11 @@ def sky2pix( fits, ra, dec, fitsname=None ):
     else :
        (x, y, rubbish1, rubbish2 ) = wcs.all_world2pix( ra, dec, numpy.array([0]), numpy.array([0]), 1 )
 
+    # this is because function sky2pix.sky2pix returns values directly as in ds9 (same WCS) , so for python/C code subtraction of 1 is needed :   
+    # it is now done here as it will be the same for all calling functions :
+    x = x - 1
+    y = y - 1
+  
     return (x,y)
 
 

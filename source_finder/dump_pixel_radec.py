@@ -6,6 +6,8 @@
 
 from __future__ import print_function
 
+# import pdb
+
 import astropy.io.fits as pyfits
 from astropy import units as u
 from astropy.coordinates import SkyCoord, EarthLocation
@@ -28,7 +30,10 @@ from astropy.time import Time
 import optparse
 import sky2pix
 
-import calcpix
+try :
+   import calcpix
+except :
+   print("WARNING : could not import module calcpix -> ignored")
 
 def mkdir_p(path):
    try:
@@ -46,7 +51,7 @@ MWA_POS=EarthLocation.from_geodetic(lon="116:40:14.93",lat="-26:42:11.95",height
 
 # last_processed_filestamp = "dump_pixel_radec.last_processed"
 
-fitslist="list"
+fitslist="fits_list_I"
 if len(sys.argv) > 1:
    fitslist = sys.argv[1]   
 
@@ -57,6 +62,7 @@ parser.add_option("--dec","--DEC","--Dec",dest="dec",default=12.33333333,help="D
 parser.add_option("--radius","-r",dest="radius",default=15,help="Find maximum pixel in radius around given position [default: %default]",type="int")
 parser.add_option("--min_alt","--min_elev","--min_elevation",dest="min_elevation",default=1.00,help="Minimum object elevation [default: %default]",type="float")
 parser.add_option('--sum','--use_sum',dest="use_sum",action="store_true",default=False, help="Use mean value in radius specified by --radius parameter [default %s]")
+parser.add_option('--weight','--use_weighting',dest="use_weighting",action="store_true",default=False, help="Use weighting [default %s]")
 
 parser.add_option('--calc_bkg','--calc_rms','--rms',dest="calc_rms",action="store_true",default=False, help="If calculate local RMS [default %s]")
 parser.add_option("--rms_inner_radius",dest="rms_inner_radius",default=5,help="RMS inner radius [default: %default]",type="int")
@@ -173,15 +179,21 @@ for fitsfile_bytes in fitslist_data :
 
    
    (x_c0,y_c0) = sky2pix.sky2pix( fits, options.ra, options.dec )
+   
+   if x_c0.ndim > 0 :
+      x_c0 = x_c0[0]
+      y_c0 = y_c0[0]
 
    # this is because function sky2pix.sky2pix returns values directly as in ds9 (same WCS) , so for python/C code subtraction of 1 is needed :   
-   x_c0_new = x_c0 - 1
-   y_c0_new = y_c0 - 1
+# -1 moved to inside of sky2pix.sky2pix    
+#   x_c0_new = x_c0 
+#   y_c0_new = y_c0 
+
+#   print("Read FITS file %s has dateobs = %s -> %.2f unixtime , (%.4f,%.4f) [deg] -> (%.2f,%.2f) [pixels in ds9 convention] -> (%.2f,%.2f) [pixels in python/C convention]" % (fitsfile,dateobs,t_unix.value,options.ra,options.dec,x_c0,y_c0,x_c0_new,y_c0_new))
+   print("Read FITS file %s has dateobs = %s -> %.2f unixtime , (%.4f,%.4f) [deg] -> (%.2f,%.2f) [pixels in python/C indexing convention]" % (fitsfile,dateobs,t_unix.value,options.ra,options.dec,x_c0,y_c0))
    
-   print("Read FITS file %s has dateobs = %s -> %.2f unixtime , (%.4f,%.4f) [deg] -> (%.2f,%.2f) [pixels in ds9 convention] -> (%.2f,%.2f) [pixels in python/C convention]" % (fitsfile,dateobs,t_unix.value,options.ra,options.dec,x_c0,y_c0,x_c0_new,y_c0_new))
-   
-   x_c0 = x_c0_new
-   y_c0 = y_c0_new
+#   x_c0 = x_c0_new
+#   y_c0 = y_c0_new
    
 #   x_c = int( numpy.round(x_c0) )
 #   y_c = int( numpy.round(y_c0) )
@@ -203,8 +215,9 @@ for fitsfile_bytes in fitslist_data :
 
    pixel_value = data[y_c,x_c]
    
-#   (weighted_sum,v1,v2,v3,v4) = calcpix.get_weighted_pixel_value( data, x_c , y_c )
-#   pixel_value = weighted_sum
+   if options.use_weighting :
+      (weighted_sum,v1,v2,v3,v4) = calcpix.get_weighted_pixel_value( data, x_c0 , y_c0 )
+      pixel_value = weighted_sum
    
    
    sum = pixel_value

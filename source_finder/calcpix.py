@@ -1,4 +1,6 @@
 
+# import pdb
+
 import astropy.io.fits as pyfits
 import numpy
 import sys
@@ -10,8 +12,8 @@ def get_weighted_pixel_value( data, xc , yc ) :
    pix = numpy.array( [xc,yc] )
    pixel_size = numpy.array( [1,1] )
 
-   xc_int = int(xc)
-   yc_int = int(yc)
+   xc_int = int( round(xc) )
+   yc_int = int( round(yc) )
       
    for y in range(yc_int+2+1,yc_int-2,-1) :
       line = "";
@@ -87,11 +89,16 @@ if __name__ == '__main__':
    if len(sys.argv) > 1:
        fitsname = sys.argv[1]
    
+   x = 0
+   if len(sys.argv) > 2:
+       x = float( sys.argv[2] )
+   
+   y = 0   
+   if len(sys.argv) > 3:
+       y = float( sys.argv[3] )
+   
    fits = pyfits.open(fitsname)
    data = fits[0].data[0][0]      
-   
-   x = 33.48
-   y = 132.77
    
 #   x = 2 
 #   y = 2
