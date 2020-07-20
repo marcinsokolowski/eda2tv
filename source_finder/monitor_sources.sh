@@ -17,24 +17,24 @@ find . -maxdepth 1 -name "*_I_diff.fits" | awk '{gsub("./","");print $0;}' | sor
 echo "monitor_source_radec.sh 293.750 21.90 sgr1935+2154_diff fits_list_I_diff"
 monitor_source_radec.sh 293.750 21.90 sgr1935+2154_diff fits_list_I_diff
 
-echo "monitor_source_radec.sh 293.750 21.90 sgr1935+2154 fits_list_I"
-monitor_source_radec.sh 293.750 21.90 sgr1935+2154 fits_list_I
+echo "monitor_source_radec.sh 293.750 21.90 sgr1935+2154 fits_list_I \"--use_weighting\""
+monitor_source_radec.sh 293.750 21.90 sgr1935+2154 fits_list_I "--use_weighting"
 
 echo "monitor_source_radec.sh 148.28875 7.92638889 B0950+08_diff fits_list_I_diff"
 monitor_source_radec.sh 148.28875 7.92638889 B0950+08_diff fits_list_I_diff 
 
-echo "monitor_source_radec.sh 148.28875 7.92638889 B0950+08  fits_list_I"
-monitor_source_radec.sh 148.28875 7.92638889 B0950+08  fits_list_I
+echo "monitor_source_radec.sh 148.28875 7.92638889 B0950+08  fits_list_I \"--use_weighting\""
+monitor_source_radec.sh 148.28875 7.92638889 B0950+08  fits_list_I "--use_weighting"
 
 echo "monitor_source_radec.sh 139.571 -12.1789 2C806_diff fits_list_I_diff"
 monitor_source_radec.sh 139.571 -12.1789 2C806_diff fits_list_I_diff
 
-echo "monitor_source_radec.sh 139.571 -12.1789 2C806 fits_list_I"
-monitor_source_radec.sh 139.571 -12.1789 2C806 fits_list_I
+echo "monitor_source_radec.sh 139.571 -12.1789 2C806 fits_list_I \"--use_weighting\""
+monitor_source_radec.sh 139.571 -12.1789 2C806 fits_list_I "--use_weighting"
 
 # control lightcurve of an empty patch of the sky as a sanity check and for RMS estimates :
-echo "monitor_source_radec.sh 155.075 16.87666667 OFF_B0950+08  fits_list_I"
-monitor_source_radec.sh 155.075 16.87666667 OFF_B0950+08  fits_list_I
+echo "monitor_source_radec.sh 155.075 16.87666667 OFF_B0950+08  fits_list_I \"--use_weighting\""
+monitor_source_radec.sh 155.075 16.87666667 OFF_B0950+08  fits_list_I "--use_weighting"
 
 echo "monitor_source_radec.sh 155.075 16.87666667 OFF_B0950+08_diff  fits_list_I_diff"
 monitor_source_radec.sh 155.075 16.87666667 OFF_B0950+08_diff  fits_list_I_diff

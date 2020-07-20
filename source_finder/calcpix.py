@@ -22,7 +22,7 @@ def get_weighted_pixel_value( data, xc , yc ) :
 #          line += ( " %05.2f " % (val))
           line += ( " (%d,%d)=%.2f " % (x,y,val))
       
-      print line + "\n"
+      print(line + "\n")
   
    left_bottom  = pix + numpy.array( [-1, -1] )*0.5
    right_bottom = pix + numpy.array( [+1, -1] )*0.5
