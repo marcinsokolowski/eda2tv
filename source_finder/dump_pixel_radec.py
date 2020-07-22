@@ -113,7 +113,8 @@ else :
 # line = ( "%.4f %.4f %.4f %d %d %.4f %s\n" % (t_unix.value,max_value,pixel_value,x_c,y_c,rms,fitsfile))
 
 if b_header :
-   line = "# UNIX_TIME   PIXEL_VAL MAX_VAL(r=%d) DIFF_VAL XC YC RMS_IQR RMS FITS_FILE ALT[deg] PIX_CNT \n" % (options.radius)
+   # t_unix.value,pixel_value,max_val,diff_value,x_c,y_c,rms_iqr,rms,fitsfile,az,alt,pixel_count,pixel_sum,pixel_sum2,max_noise,iqr,rms_iqr
+   line = "# UNIX_TIME   PIXEL_VAL MAX_VAL(r=%d) DIFF_VAL XC YC RMS_IQR RMS FITS_FILE AZIM[deg] ALT[deg] PIX_CNT PIXEL_SUM PIXEL_SUM2 MAX_NOISE IQR RMSIQR\n" % (options.radius)
    out_file.write(line)
 
 # READ last processed file :
@@ -315,7 +316,7 @@ for fitsfile_bytes in fitslist_data :
       diff_value = pixel_value - prev_pixel_value
 
    if do_write and idx > 0 :
-      line = ( "%.4f %.4f %.4f %.4f %d %d %.4f %.4f %s %.2f %d %.4f %.4f %.4f %.4f %.4f\n" % (t_unix.value,pixel_value,max_val,diff_value,x_c,y_c,rms_iqr,rms,fitsfile,alt,pixel_count,pixel_sum,pixel_sum2,max_noise,iqr,rms_iqr))
+      line = ( "%.4f %.4f %.4f %.4f %d %d %.4f %.4f %s %.2f %.2f %d %.4f %.4f %.4f %.4f %.4f\n" % ( t_unix.value , pixel_value , max_val , diff_value , x_c , y_c , rms_iqr , rms , fitsfile , az, alt , pixel_count , pixel_sum , pixel_sum2 , max_noise , iqr , rms_iqr ))
       out_file.write(line)
       print("\t\t%s" % (line))
    

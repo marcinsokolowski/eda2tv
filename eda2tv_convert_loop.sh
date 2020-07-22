@@ -87,11 +87,17 @@ export PATH=~/Software/eda2tv/:$PATH
 
 mkdir -p merged/
 
-if [[ ! -d merged/chan_${ch}.uv ]]; then
-   echo "cp -a /data/real_time_calibration/last_calibration/chan_${ch}*.uv merged/"
-   cp -a /data/real_time_calibration/last_calibration/chan_${ch}*.uv merged/
+if [[ -d merged/chan_${ch}_XX.uv && -d merged/chan_${ch}_YY.uv ]]; then
+   echo "OK : XX and YY calibration files merged/chan_${ch}_XX.uv and merged/chan_${ch}_YY.uv exist -> nothing to be done."
 else
-   echo "Calibration file merged/chan_${ch}.uv already exists -> no need to copy"
+   echo "WARNING : calibration files not provided -> using defaults, which might be incorrect (flux scale for example)"
+   
+   if [[ ! -d merged/chan_${ch}.uv ]]; then
+      echo "cp -a /data/real_time_calibration/last_calibration/chan_${ch}*.uv merged/"
+      cp -a /data/real_time_calibration/last_calibration/chan_${ch}*.uv merged/
+   else
+      echo "Calibration file merged/chan_${ch}.uv already exists -> no need to copy"
+   fi
 fi
 
 if [[ $publish -gt 0 ]]; then
