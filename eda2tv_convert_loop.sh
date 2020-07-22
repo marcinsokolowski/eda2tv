@@ -93,8 +93,10 @@ else
    echo "WARNING : calibration files not provided -> using defaults, which might be incorrect (flux scale for example)"
    
    if [[ ! -d merged/chan_${ch}.uv ]]; then
-      echo "cp -a /data/real_time_calibration/last_calibration/chan_${ch}*.uv merged/"
-      cp -a /data/real_time_calibration/last_calibration/chan_${ch}*.uv merged/
+      echo "cp -a /data/real_time_calibration/last_calibration/chan_${ch}_??.uv merged/"
+      cp -a /data/real_time_calibration/last_calibration/chan_${ch}_??.uv merged/
+      
+      echo "INFO : new version only copying _XX.uv and _YY.uv cal. solutions"
    else
       echo "Calibration file merged/chan_${ch}.uv already exists -> no need to copy"
    fi
