@@ -92,7 +92,7 @@ fitslist_data = pylab.loadtxt(fitslist,dtype='string')
 
 out_file=open(outfile,"w")
 
-line = ( "# Time-step Pixel_value X Y MAX_VALUE PIX_COUNT FITS_FILE SUM\n" )
+line = ( "# Time-step Pixel_value X Y MAX_VALUE PIX_COUNT FITS_FILE SUM UXTIME\n" )
 out_file.write( line )
 
 
@@ -130,6 +130,7 @@ for fitsfile in fitslist_data :
 
    sum = 0.00
    count = 0
+   max_val = data[x_c,y_c]
    if radius > 0 :
        print "radius = %d -> finding maximum pixel around position (%d,%d)" % (radius,x_c,y_c)
    
@@ -201,7 +202,7 @@ for fitsfile in fitslist_data :
 
 #   if count > 0 :
 #      sum = sum / count      
-   line = ( "%.4f %.4f %d %d %.4f %d %s %.8f\n" % (time_value,pixel_value,x_c,y_c,max_value,pixel_count,fitsfile,sum))
+   line = ( "%.4f %.4f %d %d %.4f %d %s %.8f %.4f\n" % (time_value,pixel_value,x_c,y_c,max_value,pixel_count,fitsfile,sum,t_unix.value))
    out_file.write(line)
    
    idx = idx + 1 
