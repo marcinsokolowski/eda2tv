@@ -143,7 +143,8 @@ for fitsfile_bytes in fitslist_data :
    do_write = True
    if not options.force_all : 
       if last_processed_fitsname is not None and fitsfile < last_processed_fitsname :
-         print("File %s < last processed = %s" % (fitsfile,last_processed_fitsname))
+         if options.verbose > 0 :
+            print("File %s < last processed = %s" % (fitsfile,last_processed_fitsname))
          if fitsfile == last_processed_fitsname :
             do_write = False # not to reapet, but read the last processed file to have difference != 0 !!!
          continue
