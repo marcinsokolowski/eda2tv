@@ -63,7 +63,7 @@ parser.add_option("--radius","-r",dest="radius",default=15,help="Find maximum pi
 parser.add_option("--min_alt","--min_elev","--min_elevation",dest="min_elevation",default=1.00,help="Minimum object elevation [default: %default]",type="float")
 parser.add_option('--sum','--use_sum',dest="use_sum",action="store_true",default=False, help="Use mean value in radius specified by --radius parameter [default %s]")
 parser.add_option('--weight','--use_weighting',dest="use_weighting",action="store_true",default=False, help="Use weighting [default %s]")
-parser.add_option('--subtract_bkg','--bkg',dest="subtract_background",default=0, help="Subtract background calculated at position N pixels off the source [default %s]")
+parser.add_option('--subtract_bkg','--bkg',dest="subtract_background",default=0, help="Subtract background calculated at position N pixels off the source [default %s]",type="int")
 
 parser.add_option('--calc_bkg','--calc_rms','--rms',dest="calc_rms",action="store_true",default=False, help="If calculate local RMS [default %s]")
 parser.add_option("--rms_inner_radius",dest="rms_inner_radius",default=5,help="RMS inner radius [default: %default]",type="int")
