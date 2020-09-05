@@ -233,6 +233,8 @@ for fitsfile_bytes in fitslist_data :
             
          (bkg,v1b,v2b,v3b,v4b) = calcpix.get_weighted_pixel_value( data, off_xc0, off_yc0 )
          
+         print("DEBUG: subtracting background %.4f - %.4f = %.4f" % (weighted_sum,bkg,(weighted_sum - bkg)))
+         
          weighted_sum = weighted_sum - bkg
          pixel_value = weighted_sum
    
