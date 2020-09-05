@@ -14,12 +14,15 @@ def get_background( data, xc , yc, r0=4, r1=6 ) :
          dist = math.sqrt( (y-yc)**2 + (x-xc)**2 )
          
          if dist >= r0 and dist <= r1 :
-            values.append( data[y,x] )
+            if x>=0 and x<data.shape[0] and y>=0 and y<=data.shape[1] :
+               values.append( data[y,x] )
             
    values.sort()
-   l = len(values)
    
-   bkg = values[l/2]
+   bkg = 0   
+   l = len(values)
+   if l > 0 :
+      bkg = values[l/2]
    
    return bkg         
 
