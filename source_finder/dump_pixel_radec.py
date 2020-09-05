@@ -63,6 +63,7 @@ parser.add_option("--radius","-r",dest="radius",default=15,help="Find maximum pi
 parser.add_option("--min_alt","--min_elev","--min_elevation",dest="min_elevation",default=1.00,help="Minimum object elevation [default: %default]",type="float")
 parser.add_option('--sum','--use_sum',dest="use_sum",action="store_true",default=False, help="Use mean value in radius specified by --radius parameter [default %s]")
 parser.add_option('--weight','--use_weighting',dest="use_weighting",action="store_true",default=False, help="Use weighting [default %s]")
+parser.add_option('--subtract_bkg','--bkg',dest="subtract_background",default=0, help="Subtract background calculated at position N pixels off the source [default %s]")
 
 parser.add_option('--calc_bkg','--calc_rms','--rms',dest="calc_rms",action="store_true",default=False, help="If calculate local RMS [default %s]")
 parser.add_option("--rms_inner_radius",dest="rms_inner_radius",default=5,help="RMS inner radius [default: %default]",type="int")
@@ -220,6 +221,20 @@ for fitsfile_bytes in fitslist_data :
    if options.use_weighting :
       (weighted_sum,v1,v2,v3,v4) = calcpix.get_weighted_pixel_value( data, x_c0 , y_c0 )
       pixel_value = weighted_sum
+      
+      if options.subtract_background > 0 :
+         off_xc0 = x_c0 - options.subtract_background
+         off_yc0 = y_c0 - options.subtract_background
+         
+         if off_xc0 < 0 :
+            off_xc0 = 0
+         if off_yc0 < 0 :
+            off_yc0 = 0 
+            
+         (bkg,v1b,v2b,v3b,v4b) = calcpix.get_weighted_pixel_value( data, off_xc0, off_yc0 )
+         
+         weighted_sum = weighted_sum - bkg
+         pixel_value = weighted_sum
    
    
    sum = pixel_value
