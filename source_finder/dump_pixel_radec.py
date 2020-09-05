@@ -237,6 +237,8 @@ for fitsfile_bytes in fitslist_data :
          
          weighted_sum = weighted_sum - bkg
          pixel_value = weighted_sum
+         
+         # or def get_background( data, xc , yc, r0=4, r1=6 ) :
    
    
    sum = pixel_value

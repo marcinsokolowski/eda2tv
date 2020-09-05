@@ -6,6 +6,23 @@ import numpy
 import sys
 import math
 
+def get_background( data, xc , yc, r0=4, r1=6 ) :
+
+   values = []
+   for y in range(yc-r1,yc+r1+1) :
+      for x in range(xc-r1,xc+r1+1) :
+         dist = math.sqrt( (y-yc)**2 + (x-xc)**2 )
+         
+         if dist >= r0 and dist <= r1 :
+            values.append( data[y,x] )
+            
+   values.sort()
+   l = len(values)
+   
+   bkg = values[l/2]
+   
+   return bkg         
+
 def get_weighted_pixel_value( data, xc , yc ) :
    print("get_weighted_pixel_value( %.2f , %.2f)" % (xc,yc))
 
