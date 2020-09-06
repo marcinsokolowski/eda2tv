@@ -6,7 +6,10 @@ import numpy
 import sys
 import math
 
-def get_background( data, xc , yc, r0=4, r1=6 ) :
+def get_background( data, xc_float , yc_float, r0=4, r1=6 ) :
+
+   xc = int( round(xc_float) )
+   yc = int( round(yc_float) )
 
    values = []
    for y in range(yc-r1,yc+r1+1) :
