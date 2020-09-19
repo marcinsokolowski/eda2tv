@@ -1,5 +1,11 @@
 #!/bin/bash
 
+publish=1 # copy images/movie to the www server 
+if [[ -n "$1" && "$1" != "-" ]]; then
+   publish=$1
+fi
+
+
 export PATH=~/Software/eda2tv/:~/Software/eda2tv/source_finder:~/Software/miriad_scripts:$PATH
 
 # integrity checks
@@ -18,7 +24,6 @@ auto_freq=1
 imsize=180
 start_diff=1
 start_monitoring=1
-publish=1 # copy images/movie to the www server 
 correlator_inttime=1.9818086 
 n_avg=1
 eda2tv_inttime=`echo $n_avg" "$correlator_inttime | awk '{print ($1*$2);}'`
@@ -33,6 +38,7 @@ echo "PARAMETERS :"
 echo "###################################################"
 echo "station = |$station|"
 echo "do_png_rate = $do_png_rate"
+echo "publish = $publish"
 echo "###################################################"
 
 # auto-detect frequency channel :
@@ -65,6 +71,7 @@ if [[ $auto_freq -gt 0 ]]; then
 fi
 
 # imsize = 3 x beam_size (could also be 3.75 x beam_size ) :
+# n_pix = 3 * ( 180 deg / Beam_size[deg] ) = 3 pi D_m f_mhz / (c_mhz=300) = (freq_mhz/100.00)*D_m*pi
 imsize=`echo $freq_ch | awk '{freq_mhz=$1*(400.00/512.00);D_m=35;pi=3.1415;n_pix_f=(freq_mhz/100.00)*D_m*pi;n_pix_int=int(n_pix_f/10.00);print n_pix_int*10+10;;}'`
 
 echo "##############################################################"
