@@ -1,0 +1,19 @@
+#!/bin/bash
+
+ch=294
+if [[ -n "$1" && "$1" != "-" ]]; then
+   ch=$1
+fi
+
+cal_dtm="2020_04_09-11:25"
+if [[ -n "$2" && "$2" != "-" ]]; then
+   cal_dtm="$2"
+fi
+
+
+echo "cp -a /data/real_time_calibration/${cal_dtm}/chan_${ch}_????????T??????_XX.uv chan_${ch}_XX.uv"
+cp -a /data/real_time_calibration/${cal_dtm}/chan_${ch}_????????T??????_XX.uv chan_${ch}_XX.uv
+
+echo "cp -a /data/real_time_calibration/${cal_dtm}/chan_${ch}_????????T??????_YY.uv chan_${ch}_YY.uv"
+cp -a /data/real_time_calibration/${cal_dtm}/chan_${ch}_????????T??????_YY.uv chan_${ch}_YY.uv
+
