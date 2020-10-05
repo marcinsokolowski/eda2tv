@@ -28,7 +28,7 @@ done
 
 # filter some most interesting ones :
 iss_file=${outfile%%.txt}_ISS.txt
-grep ISS ${outfile} | grep ZARYA > ${outfile}.ISS
+grep ISS ${outfile} | grep ZARYA > ${iss_file}
 
 for sat in `echo "HST KAITUO BGUSAT BUGSAT"`
 do
