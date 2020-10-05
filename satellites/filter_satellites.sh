@@ -32,7 +32,7 @@ grep ISS ${outfile} | grep ZARYA > ${outfile}.ISS
 
 for sat in `echo "HST KAITUO BGUSAT BUGSAT"`
 do
-   sat_file=${${outfile%%.txt}_${sat}.txt
+   sat_file=${outfile%%.txt}_${sat}.txt
    
-   grep ${sat}  ${outfile} > ${sat_file}
+   grep ${sat} ${outfile} > ${sat_file}
 done
