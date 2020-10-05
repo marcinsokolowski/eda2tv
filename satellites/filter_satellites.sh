@@ -27,8 +27,12 @@ done
 
 
 # filter some most interesting ones :
-grep ISS ${outfile} > ${outfile}.ISS
-grep HST ${outfile} > ${outfile}.HST
-grep KAITUO ${outfile} > ${outfile}.KAITUO
-grep BGUSAT ${outfile} > ${outfile}.BGUSAT
-grep BUGSAT ${outfile} > ${outfile}.BUGSAT
+iss_file=${outfile%%.txt}_ISS.txt
+grep ISS ${outfile} | grep ZARYA > ${outfile}.ISS
+
+for sat in `echo "HST KAITUO BGUSAT BUGSAT"`
+do
+   sat_file=${${outfile%%.txt}_${sat}.txt
+   
+   grep ${sat}  ${outfile} > ${sat_file}
+done
