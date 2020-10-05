@@ -30,6 +30,10 @@ if [[ -n "$5" && "$5" != "-" ]]; then
    interval=$5
 fi
 
+step=1
+if [[ -n "$6" && "$6" != "-" ]]; then
+   step=$6
+fi
 
 if [[ ! -n ${tle_file} ]]; then
    echo "WARNING : TLE file not specified -> will try using the most up to date"
@@ -93,11 +97,20 @@ echo "location = $location -> qth_file = ${qth_file}"
 echo "min_elev = $min_elev [deg]"
 echo "tle_file = $tle_file"
 echo "interval = $interval"
+echo "step     = $step"
 echo "###########################################################"
 
+ux=${start_ux}
+end_ux=$(($start_ux+$interval))
 
-echo "${sattest_path} $start_ux -tle=$tle_file -all -mwa -qth=${qth_file} -outregfile=minelev${min_elev}_${ux}.reg  -outfile=minelev${min_elev}_${ux}.txt -print_header -min_elevation=${min_elev} -interval=$interval > minelev${min_elev}_${ux}.out 2>&1"
-${sattest_path} $start_ux -tle=$tle_file -all -mwa -qth=${qth_file} -outregfile=minelev${min_elev}_${ux}.reg  -outfile=minelev${min_elev}_${ux}.txt -print_header -min_elevation=${min_elev} -interval=$interval > minelev${min_elev}_${ux}.out 2>&1
+while [[ $ut -le $end_ux ]];
+do
+   echo "${sattest_path} $ux -tle=$tle_file -all -mwa -qth=${qth_file} -outregfile=minelev${min_elev}_${ux}.reg  -outfile=${ux}.txt -print_header -min_elevation=${min_elev} -interval=1 > ${ux}.out 2>&1"
+   ${sattest_path} $ux -tle=$tle_file -all -mwa -qth=${qth_file} -outregfile=minelev${min_elev}_${ux}.reg  -outfile=${ux}.txt -print_header -min_elevation=${min_elev} -interval=1 > ${ux}.out 2>&1
+   
+   ux=$(($ux+$step))
+done
+   
    
 echo "Done at:"   
 date
