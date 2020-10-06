@@ -32,7 +32,35 @@ grep ISS ${outfile} | grep ZARYA > ${iss_file}
 
 for sat in `echo "HST KAITUO BGUSAT BUGSAT"`
 do
-   sat_file=${outfile%%.txt}_${sat}.txt
+   sat_file=${outfile%%.txt}_${sat}.tmp
+   sat_file_final=${outfile%%.txt}_${sat}.txt
    
    grep ${sat} ${outfile} > ${sat_file}
+   
+   if [[ ! -s ${sat_file} ]]; then
+      echo "Removing empty file ${sat_file}"
+      rm -f ${sat_file}
+   else
+      head -1 ${outfile} > ${sat_file_final}
+      cat ${sat_file} >> ${sat_file_final}
+      rm -f ${sat_file}
+   fi
 done
+
+if [[ -s ~/github/eda2tv/satellites/bignames.txt ]]; then
+   for sat in `cat ~/github/eda2tv/satellites/bignames.txt`
+   do
+      sat_file=${outfile%%.txt}_${sat}.tmp
+      sat_file_final=${outfile%%.txt}_${sat}.txt
+      grep ${sat} ${outfile} > ${sat_file}
+
+      if [[ ! -s ${sat_file} ]]; then
+         echo "Removing empty file ${sat_file}"
+         rm -f ${sat_file}
+      else
+         head -1 ${outfile} > ${sat_file_final}
+         cat ${sat_file} >> ${sat_file_final}
+         rm -f ${sat_file}
+      fi
+   done
+fi
