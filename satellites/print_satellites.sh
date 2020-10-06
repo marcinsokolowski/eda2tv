@@ -103,7 +103,7 @@ echo "###########################################################"
 ux=${start_ux}
 end_ux=$(($start_ux+$interval))
 
-while [[ $ut -le $end_ux ]];
+while [[ $ux -le $end_ux ]];
 do
    echo "${sattest_path} $ux -tle=$tle_file -all -mwa -qth=${qth_file} -outregfile=minelev${min_elev}_${ux}.reg  -outfile=${ux}.txt -print_header -min_elevation=${min_elev} -interval=1 > ${ux}.out 2>&1"
    ${sattest_path} $ux -tle=$tle_file -all -mwa -qth=${qth_file} -outregfile=minelev${min_elev}_${ux}.reg  -outfile=${ux}.txt -print_header -min_elevation=${min_elev} -interval=1 > ${ux}.out 2>&1
