@@ -4,6 +4,7 @@ ch=204
 if [[ -n "$1" && "$1" != "-" ]]; then
    ch=$1
 fi
+ch_num=`echo $ch | awk '{printf("%d\n",$1);}'`
 freq_mhz=`echo $ch | awk '{printf("%.4f",$1*(400.00/512.00));}'`
 
 voltages=1
@@ -39,12 +40,12 @@ if [[ -n "$7" && "$7" != "-" ]]; then
 fi
 
 imsize=180 # 180 at <= 160 MHz and 360 at > 160 MHz is ok
-if [[ $ch -gt 204 ]]; then  
+if [[ $ch_num -gt 204 ]]; then  
    imsize=360
 else
-   if [[ $ch -lt 141 ]]; then
+   if [[ $ch_num -lt 141 ]]; then
       imsize=120
-      if [[ $ch -lt 80 ]]; then
+      if [[ $ch_num -lt 80 ]]; then
          echo "freq_ch = $ch -> imsize=50"
          imsize=60
       fi
@@ -77,7 +78,7 @@ fi
 echo "##################################"
 echo "PARAMETERS:"
 echo "##################################"
-echo "ch      = $ch"
+echo "ch      = $ch (as number = $ch_num)"
 echo "imsize  = $imsize"
 echo "publish = $publish"
 echo "##################################"

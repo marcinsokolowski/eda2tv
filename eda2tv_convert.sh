@@ -7,6 +7,7 @@ freq_ch=204
 if [[ -n "$1" && "$1" != "-" ]]; then
    freq_ch=$1
 fi
+ch_num=`echo $freq_ch | awk '{printf("%d\n",$1);}'`
 
 voltages=1
 if [[ -n "$2" && "$2" != "-" ]]; then
@@ -40,12 +41,12 @@ if [[ -n "$7" && "$7" != "-" ]]; then
 fi
 
 imsize=180 # 128 or 256 
-if [[ $freq_ch -gt 204 ]]; then
+if [[ $ch_num -gt 204 ]]; then
    imsize=360
 else
-   if [[ $freq_ch -lt 141 ]]; then
+   if [[ $ch_num -lt 141 ]]; then
       imsize=120
-      if [[ $freq_ch -lt 80 ]]; then
+      if [[ $ch_num -lt 80 ]]; then
          imsize=60
       fi
    fi
@@ -83,7 +84,7 @@ fi
 echo "##################################"
 echo "PARAMETERS:"
 echo "##################################"
-echo "ch      = $freq_ch"
+echo "ch      = $freq_ch (num value = $ch_num)"
 echo "imsize  = $imsize"
 echo "publish = $publish"
 echo "process_last_hdf5_file = $process_last_hdf5_file"
