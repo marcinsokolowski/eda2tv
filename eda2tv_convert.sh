@@ -40,17 +40,18 @@ if [[ -n "$7" && "$7" != "-" ]]; then
    use_full_files=$7
 fi
 
-imsize=180 # 128 or 256 
-if [[ $ch_num -gt 204 ]]; then
-   imsize=360
-else
-   if [[ $ch_num -lt 141 ]]; then
-      imsize=120
-      if [[ $ch_num -lt 80 ]]; then
-         imsize=60
-      fi
-   fi
-fi
+# imsize=180 # 128 or 256 
+imsize=`echo $ch_num | awk '{freq_mhz=$1*(400.00/512.00);D_m=35;pi=3.1415;n_pix_f=(freq_mhz/100.00)*D_m*pi;n_pix_int=int(n_pix_f/10.00);print n_pix_int*10+10;;}'`
+# if [[ $ch_num -gt 204 ]]; then
+#   imsize=360
+#else
+#   if [[ $ch_num -lt 141 ]]; then
+#      imsize=120
+#      if [[ $ch_num -lt 80 ]]; then
+#         imsize=60
+#      fi
+#   fi
+#fi
 if [[ -n "$8" && "$8" != "-" ]]; then
    imsize=$8
 fi

@@ -39,18 +39,19 @@ if [[ -n "$7" && "$7" != "-" ]]; then
    use_full_files=$7
 fi
 
-imsize=180 # 180 at <= 160 MHz and 360 at > 160 MHz is ok
-if [[ $ch_num -gt 204 ]]; then  
-   imsize=360
-else
-   if [[ $ch_num -lt 141 ]]; then
-      imsize=120
-      if [[ $ch_num -lt 80 ]]; then
-         echo "freq_ch = $ch -> imsize=50"
-         imsize=60
-      fi
-   fi
-fi
+# imsize=180 # 180 at <= 160 MHz and 360 at > 160 MHz is ok
+imsize=`echo $ch_num | awk '{freq_mhz=$1*(400.00/512.00);D_m=35;pi=3.1415;n_pix_f=(freq_mhz/100.00)*D_m*pi;n_pix_int=int(n_pix_f/10.00);print n_pix_int*10+10;;}'`
+#if [[ $ch_num -gt 204 ]]; then  
+#   imsize=360
+#else
+#   if [[ $ch_num -lt 141 ]]; then
+#      imsize=120
+#      if [[ $ch_num -lt 80 ]]; then
+#         echo "freq_ch = $ch -> imsize=50"
+#         imsize=60
+#      fi
+#   fi
+#fi
 if [[ -n "$8" && "$8" != "-" ]]; then
    imsize=$8
 fi
@@ -75,12 +76,19 @@ if [[ -n "${12}" && "${12}" != "-" ]]; then
    publish=${12}
 fi
 
+copy_calibration=1
+if [[ -n "${13}" && "${13}" != "-" ]]; then
+   copy_calibration=${13}
+fi
+
+
 echo "##################################"
 echo "PARAMETERS:"
 echo "##################################"
 echo "ch      = $ch (as number = $ch_num)"
 echo "imsize  = $imsize"
 echo "publish = $publish"
+echo "copy_calibration = $copy_calibration"
 echo "##################################"
 
 
@@ -88,19 +96,23 @@ export PATH=~/Software/eda2tv/:$PATH
 
 mkdir -p merged/
 
-if [[ -d merged/chan_${ch}_XX.uv && -d merged/chan_${ch}_YY.uv ]]; then
-   echo "OK : XX and YY calibration files merged/chan_${ch}_XX.uv and merged/chan_${ch}_YY.uv exist -> nothing to be done."
-else
-   echo "WARNING : calibration files not provided -> using defaults, which might be incorrect (flux scale for example)"
-   
-   if [[ ! -d merged/chan_${ch}.uv ]]; then
-      echo "cp -a /data/real_time_calibration/last_calibration/chan_${ch}_??.uv merged/"
-      cp -a /data/real_time_calibration/last_calibration/chan_${ch}_??.uv merged/
-      
-      echo "INFO : new version only copying _XX.uv and _YY.uv cal. solutions"
+if [[ $copy_calibration -gt 0 ]]; then
+   if [[ -d merged/chan_${ch}_XX.uv && -d merged/chan_${ch}_YY.uv ]]; then
+      echo "OK : XX and YY calibration files merged/chan_${ch}_XX.uv and merged/chan_${ch}_YY.uv exist -> nothing to be done."
    else
-      echo "Calibration file merged/chan_${ch}.uv already exists -> no need to copy"
+      echo "WARNING : calibration files not provided -> using defaults, which might be incorrect (flux scale for example)"
+   
+      if [[ ! -d merged/chan_${ch}.uv ]]; then
+         echo "cp -a /data/real_time_calibration/last_calibration/chan_${ch}_??.uv merged/"
+         cp -a /data/real_time_calibration/last_calibration/chan_${ch}_??.uv merged/
+      
+         echo "INFO : new version only copying _XX.uv and _YY.uv cal. solutions"
+      else
+         echo "Calibration file merged/chan_${ch}.uv already exists -> no need to copy"
+      fi
    fi
+else 
+   echo "WARNING : copying of calibration from /data/real_time_calibration/last_calibration/ is not required"
 fi
 
 if [[ $publish -gt 0 ]]; then
