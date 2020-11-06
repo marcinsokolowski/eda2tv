@@ -5,6 +5,13 @@ if [[ -n "$1" && "$1" != "-" ]]; then
    publish=$1
 fi
 
+copy_calibration=0
+cal_dtm=""
+if [[ -n "$2" && "$2" != "-" ]]; then
+   copy_calibration=1
+   cal_dtm=$2
+fi
+
 
 export PATH=~/Software/eda2tv/:~/Software/eda2tv/source_finder:~/Software/miriad_scripts:$PATH
 
@@ -39,6 +46,7 @@ echo "###################################################"
 echo "station = |$station|"
 echo "do_png_rate = $do_png_rate"
 echo "publish = $publish"
+echo "copy_calibration = $copy_calibration ($cal_dtm)"
 echo "###################################################"
 
 # auto-detect frequency channel :
@@ -85,6 +93,17 @@ echo "##############################################################"
 mkdir -p merged/
 echo $freq_ch >> channel.txt
 echo $freq_ch >> merged/channel.txt
+
+if [[ $copy_calibration -gt 0 ]]; then
+   echo "DEBUG : copying calibration"
+   
+   cd merged/
+   echo "copy_calibration.sh ${freq_ch} ${cal_dtm}"
+   copy_calibration.sh ${freq_ch} ${cal_dtm}
+   cd ../
+else
+   echo "WARNING : copying of calibration is not required - data may not be calibrated properly !!!"
+fi
 
 
 if [[ $correlated_data -gt 0 ]]; then 
