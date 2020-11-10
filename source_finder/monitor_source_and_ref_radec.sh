@@ -31,6 +31,17 @@ min_elevation=15
 off_offset=7
 
 
+echo "##############################################################"
+echo "PARAMETERS of monitor_source_and_ref_radec.sh :"
+echo "##############################################################"
+echo "(ra,dec) = ($ra,$dec) [deg]"
+echo "name     = $name"
+echo "off      = $off"
+echo "options  = $options"
+echo "##############################################################"
+
+
+
 export PATH=~/Software/eda2tv/source_finder/:$PATH
 
 echo "monitor_source_radec.sh $ra $dec ${name}_diff fits_list_I_diff"
