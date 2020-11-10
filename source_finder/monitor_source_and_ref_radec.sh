@@ -51,8 +51,8 @@ echo "monitor_source_radec.sh $ra $dec ${name} fits_list_I \"--use_weighting\""
 monitor_source_radec.sh $ra $dec ${name} fits_list_I "--use_weighting"
 
 if [[ $off -gt 0 ]]; then
-   ra_off=`echo $ra | awk -v off_offset=${off_offset} '{prinf("%.8f\n",($1+off_offset));}'`
-   dec_off=`echo $dec | awk -v off_offset=${off_offset} '{prinf("%.8f\n",($1+off_offset));}'`
+   ra_off=`echo $ra | awk -v off_offset=${off_offset} '{printf("%.8f\n",($1+off_offset));}'`
+   dec_off=`echo $dec | awk -v off_offset=${off_offset} '{printf("%.8f\n",($1+off_offset));}'`
    
    echo "monitor_source_radec.sh $ra_off $dec_off OFF_${name}_diff fits_list_I_diff"
    monitor_source_radec.sh $ra_off $dec_off OFF_${name}_diff fits_list_I_diff
