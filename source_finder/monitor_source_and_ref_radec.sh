@@ -27,10 +27,9 @@ if [[ -n "$5" && "$5" != "-" ]]; then
    off=$5
 fi
 
+min_elevation=15
 off_offset=7
 
-min_elevation=15
-radius_deg=3
 
 export PATH=~/Software/eda2tv/source_finder/:$PATH
 
@@ -47,7 +46,8 @@ if [[ $off -gt 0 ]]; then
    echo "monitor_source_radec.sh $ra_off $dec_off OFF_${name}_diff fits_list_I_diff"
    monitor_source_radec.sh $ra_off $dec_off OFF_${name}_diff fits_list_I_diff
    
-   echo "monitor_source_radec.sh $ra_off $dec_off OFF_${name}  fits_list_I \"--use_weighting\""
-   monitor_source_radec.sh $ra_off $dec_off OFF_${name}  fits_list_I "--use_weighting"
+   # reference can be 0 degree above horizon :
+   echo "monitor_source_radec.sh $ra_off $dec_off OFF_${name}  fits_list_I \"--use_weighting\" 0"
+   monitor_source_radec.sh $ra_off $dec_off OFF_${name}  fits_list_I "--use_weighting" 0
 fi
 

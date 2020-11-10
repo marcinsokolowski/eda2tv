@@ -29,8 +29,12 @@ if [[ -n "$5" && "$5" != "-" ]]; then
    options=$5
 fi
 
-
 min_elevation=15
+if [[ -n "$6" && "$6" != "-" ]]; then
+   min_elevation=$6
+fi
+
+
 radius_deg=3
 
 export PATH=~/Software/eda2tv/source_finder/:$PATH
