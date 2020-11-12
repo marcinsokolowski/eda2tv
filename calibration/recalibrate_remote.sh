@@ -4,7 +4,8 @@
 
 # Eda2 : 2020_04_28-12:39
 
-cal_timestamp_eda2=2020_04_28-12:39
+# cal_timestamp_eda2=2020_04_28-12:39
+cal_timestamp_eda2=""
 if [[ -n "$1" && "$1" != "-" ]]; then
    cal_timestamp_eda2="$1"
 fi
@@ -21,13 +22,18 @@ if [[ -n "$3" && "$3" != "-" ]]; then
 fi
 
 # eda2 :
-echo "DEBUG : re-calibrating EDA2 station"
-station=eda2
-cd ${basedir}/${station}/data/real_time_calibration
-rsync -avP ${station}:/data/real_time_calibration/${cal_timestamp_eda2} .
-cd ${cal_timestamp_eda2}
-echo "~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_eda2}"
-~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_eda2}
+if [[ -n "$cal_timestamp_eda2" ]]; then
+   echo "DEBUG : re-calibrating EDA2 station"
+   
+   station=eda2
+   cd ${basedir}/${station}/data/real_time_calibration
+   rsync -avP ${station}:/data/real_time_calibration/${cal_timestamp_eda2} .
+   cd ${cal_timestamp_eda2}
+   echo "~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_eda2}"
+   ~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_eda2}
+else
+  echo "DEBUG : re-calibration of EDA2 station is not required"
+fi
 
 if [[ -n "$cal_timestamp_aavs2" ]]; then
    echo "DEBUG : re-calibrating AAVS2 station"
