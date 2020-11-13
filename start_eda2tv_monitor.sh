@@ -12,6 +12,10 @@ if [[ -n "$2" && "$2" != "-" ]]; then
    cal_dtm=$2
 fi
 
+start_monitoring=1
+if [[ -n "$3" && "$3" != "-" ]]; then
+   start_monitoring=$3
+fi
 
 export PATH=~/Software/eda2tv/:~/Software/eda2tv/source_finder:~/Software/miriad_scripts:$PATH
 
@@ -30,7 +34,6 @@ freq_ch=204
 auto_freq=1
 imsize=180
 start_diff=1
-start_monitoring=1
 correlator_inttime=1.9818086 
 n_avg=1
 eda2tv_inttime=`echo $n_avg" "$correlator_inttime | awk '{print ($1*$2);}'`
@@ -85,9 +88,10 @@ imsize=`echo $freq_ch | awk '{freq_mhz=$1*(400.00/512.00);D_m=35;pi=3.1415;n_pix
 echo "##############################################################"
 echo "PARAMETERS:"
 echo "##############################################################"
-echo "correlated_data = $correlated_data"
-echo "freq_ch         = $freq_ch"
-echo "imsize          = $imsize"
+echo "correlated_data  = $correlated_data"
+echo "freq_ch          = $freq_ch"
+echo "imsize           = $imsize"
+echo "start_monitoring = $start_monitoring"
 echo "##############################################################"
 
 mkdir -p merged/
@@ -144,10 +148,24 @@ else
    echo "WARNING : starting of difference script is not required"
 fi
 
-if [[ $start_monitoring -gt 0 ]]; then
+if [[ $start_monitoring -gt 0 ]]; then   
    cd merged/
+   if [[ $start_monitoring -gt 10 ]]; then
+      echo "PROGRESS : waiting $start_monitoring seconds for before monitoring started ..."
+      echo "sleep $start_monitoring"
+      sleep $start_monitoring      
+   fi
+   
    echo "nohup monitor_sources_loop.sh > monitor_sources_loop.out 2>&1 &"
    nohup monitor_sources_loop.sh > monitor_sources_loop.out 2>&1 &
+   
+   echo "sleep 5"
+   sleep 5
+   
+   echo "Starting triggering of MWA observations by B0950 acitivity ..."
+   echo "nohup trigger_mwa_b0950.sh > trigger_mwa_b0950.log 2>&1 &"
+   nohup trigger_mwa_b0950.sh > trigger_mwa_b0950.log 2>&1 &
+   
    cd ..
 
    echo "sleep 5"   
