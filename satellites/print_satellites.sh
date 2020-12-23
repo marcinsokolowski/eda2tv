@@ -35,6 +35,12 @@ if [[ -n "$6" && "$6" != "-" ]]; then
    step=$6
 fi
 
+max_alt=2000
+if [[ -n "$7" && "$7" != "-" ]]; then
+   max_alt=$7
+fi
+
+
 if [[ ! -n ${tle_file} ]]; then
    echo "WARNING : TLE file not specified -> will try using the most up to date"
   
@@ -105,8 +111,8 @@ end_ux=$(($start_ux+$interval))
 
 while [[ $ux -le $end_ux ]];
 do
-   echo "${sattest_path} $ux -tle=$tle_file -all -mwa -qth=${qth_file} -outregfile=minelev${min_elev}_${ux}.reg  -outfile=${ux}.txt -print_header -min_elevation=${min_elev} -interval=1 > ${ux}.out 2>&1"
-   ${sattest_path} $ux -tle=$tle_file -all -mwa -qth=${qth_file} -outregfile=minelev${min_elev}_${ux}.reg  -outfile=${ux}.txt -print_header -min_elevation=${min_elev} -interval=1 > ${ux}.out 2>&1
+   echo "${sattest_path} $ux -tle=$tle_file -all -mwa -qth=${qth_file} -outregfile=minelev${min_elev}_${ux}.reg  -outfile=${ux}.txt -print_header -min_elevation=${min_elev} -interval=1 -max_alt=${max_alt} > ${ux}.out 2>&1"
+   ${sattest_path} $ux -tle=$tle_file -all -mwa -qth=${qth_file} -outregfile=minelev${min_elev}_${ux}.reg  -outfile=${ux}.txt -print_header -min_elevation=${min_elev} -interval=1 -max_alt=${max_alt} > ${ux}.out 2>&1
    
    ux=$(($ux+$step))
 done
