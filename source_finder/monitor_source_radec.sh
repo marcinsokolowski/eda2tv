@@ -34,8 +34,10 @@ if [[ -n "$6" && "$6" != "-" ]]; then
    min_elevation=$6
 fi
 
-
 radius_deg=3
+if [[ -n "$7" && "$7" != "-" ]]; then
+   radius_deg=$7
+fi
 
 export PATH=~/Software/eda2tv/source_finder/:$PATH
 

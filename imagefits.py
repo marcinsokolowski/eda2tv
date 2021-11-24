@@ -142,8 +142,8 @@ if __name__ == '__main__':
             if options.outfile is not None :
                jpgfile = options.outfile
    
-            if options.regfile is not None :
-               regfile = options.regfile   
+         if options.regfile is not None :
+            regfile = options.regfile   
 
          print("DEBUG : converting file %s -> %s , %s" % (filename,jpgfile,regfile))
 
@@ -229,7 +229,8 @@ if __name__ == '__main__':
             plt.imshow(image_data, vmin=mean-5*rms, vmax=mean+5*rms , origin='lower', cmap=plt.cm.viridis)
 #            plt.imshow(image_data, vmin=0.00, vmax=50000, origin='lower' , cmap=plt.cm.viridis)
       
-         plt.colorbar()
+         cbar = plt.colorbar()
+         cbar.ax.tick_params(labelsize=10)
 
          # image title (fits file name) : 
          # OLD (before 20190909) :
@@ -237,6 +238,7 @@ if __name__ == '__main__':
    
 
          if os.path.exists(regfile) and os.stat(regfile).st_size > 0 :
+            print("DEBUG : loading region file %s" % (regfile))
             import pyregion
             # r = pyregion.open(regfile)
             r=[]
