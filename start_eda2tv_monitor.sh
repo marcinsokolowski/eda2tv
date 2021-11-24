@@ -114,8 +114,8 @@ if [[ $correlated_data -gt 0 ]]; then
    echo "Starting eda2tv for correlated data in channel = $freq_ch at :"
    date
 
-   echo "nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 $eda2tv_inttime 1 ${station} 1 $imsize \"-a $n_avg\" ${do_png_rate} 0 ${publish} > eda2tv.out 2>&1 &"   
-   nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 $eda2tv_inttime 1 ${station} 1 $imsize "-a $n_avg" ${do_png_rate} 0 ${publish} > eda2tv.out 2>&1 &
+   echo "nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 $eda2tv_inttime 1 ${station} 1 $imsize \"-a $n_avg\" ${do_png_rate} 0 ${publish} ${copy_calibration} > eda2tv.out 2>&1 &"   
+   nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 $eda2tv_inttime 1 ${station} 1 $imsize "-a $n_avg" ${do_png_rate} 0 ${publish} ${copy_calibration} > eda2tv.out 2>&1 &
 
    echo "sleep 5"   
    sleep 5

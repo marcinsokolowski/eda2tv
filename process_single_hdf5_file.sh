@@ -24,6 +24,27 @@ if [[ -n "$3" && "$3" != "-" ]]; then
    chmod -w instr_config.txt
 fi
 
+base_filename=
+if [[ -n "$4" && "$4" != "-" ]]; then
+   base_filename=$4
+fi
+
+station=eda2
+if [[ -n "$5" && "$5" != "-" ]]; then
+   station=$5
+fi
+
+ch=204
+if [[ -n "$6" && "$6" != "-" ]]; then
+   ch=$6
+fi
+
+size=180
+if [[ -n "$7" && "$7" != "-" ]]; then
+   size=$7
+fi
+
+
 # kdiff3 instr_config.txt ../merged_current_version1/instr_config.txt &
 echo "ln -s ${path}/${hdf5_file}"
 ln -s ${path}/${hdf5_file}
@@ -31,10 +52,11 @@ ln -s ${path}/${hdf5_file}
 
 ls ${hdf5_file} > new_hdf5_list.txt
 
-echo "hdf5_to_uvfits_all.sh -c -l -i 1.98181 -n 1 -d ./ -N -z -a 1 -f 204 -L new_hdf5_list.txt -S 0 -s eda2 -a 1"
-hdf5_to_uvfits_all.sh -c -l -i 1.98181 -n 1 -d ./ -N -z -a 1 -f 204 -L new_hdf5_list.txt -S 0 -s eda2 -a 1
+echo "hdf5_to_uvfits_all.sh -c -l -i 1.98181 -n 1 -d ./ -N -z -a 1 -f ${ch} -L new_hdf5_list.txt -S 0 -s ${station} -a 1"
+hdf5_to_uvfits_all.sh -c -l -i 1.98181 -n 1 -d ./ -N -z -a 1 -f ${ch} -L new_hdf5_list.txt -S 0 -s ${station} -a 1
 
-ls *.uvfits > uvfits_list
+echo "ls ${base_filename}*.uvfits > uvfits_list"
+ls ${base_filename}*.uvfits > uvfits_list
 
-echo "miriad_applycal_and_image_list.sh uvfits_list chan_204 180 - 0"
-miriad_applycal_and_image_list.sh uvfits_list chan_204 180 - 0
+echo "miriad_applycal_and_image_list.sh uvfits_list chan_${ch} ${size} - 1"
+miriad_applycal_and_image_list.sh uvfits_list chan_${ch} ${size} - 1
