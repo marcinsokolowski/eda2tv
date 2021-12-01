@@ -29,8 +29,8 @@ if [[ -n "$cal_timestamp_eda2" ]]; then
    cd ${basedir}/${station}/data/real_time_calibration
    rsync --exclude 'cal.out' --exclude 'NoSunBeamCorr' -avP ${station}:/data/real_time_calibration/${cal_timestamp_eda2} .
    cd ${cal_timestamp_eda2}
-   echo "~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_eda2}"
-   ~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_eda2}
+   echo "~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_eda2} ${basedir}"
+   ~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_eda2} ${basedir}
 else
   echo "DEBUG : re-calibration of EDA2 station is not required"
 fi
@@ -43,8 +43,8 @@ if [[ -n "$cal_timestamp_aavs2" ]]; then
    cd ${basedir}/${station}/data/real_time_calibration
    rsync -avP --exclude 'cal.out' --exclude 'NoSunBeamCorr' ${station}:/data/real_time_calibration/${cal_timestamp_aavs2} .
    cd ${cal_timestamp_aavs2}
-   echo "~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_aavs2}"
-   ~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_aavs2}
+   echo "~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_aavs2} ${basedir}"
+   ~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_aavs2} ${basedir}
 else
    echo "DEBUG : re-calibration of AAVS2 station is not required"
 fi
