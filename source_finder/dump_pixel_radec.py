@@ -90,6 +90,8 @@ if __name__ == '__main__':
       fitslist = sys.argv[1]   
 
 
+   (options, args) = parse_options()
+
    print("###############################################################################")
    print("PARAMETERS:")
    print("###############################################################################")
@@ -223,6 +225,7 @@ if __name__ == '__main__':
    
       data = None
 #   if fits_type == 1 :
+      print("DEBUG : ndim = %d" % (fits[0].data.ndim))
       if fits[0].data.ndim >= 4 :
          data = fits[0].data[0,0]
       else :
