@@ -63,6 +63,7 @@ def parse_options(idx):
    parser.add_option('--reg_postfix','--reg_ext',dest="reg_postfix",default=".reg",help="Region file to use [default %default]")
    parser.add_option('--fits_list','--list_file','--list','--fitslist',dest="fitslist_file",default=None, help="FITS list file [default %default]")
    parser.add_option('--every_n_fits',dest="every_n_fits",default=1,help="Every N-th file to be converted [default %default",type="int")
+   parser.add_option('--force',dest="skip_existing",action='store_false',default=True,help="Force over-writting jpg file [default %default]")
    
    (options,args) = parser.parse_args(sys.argv[2:])
    
@@ -135,7 +136,13 @@ if __name__ == '__main__':
          file_start_time=time.time()
       
          jpgfile=filename.replace('.fits', '.'+options.image_format )
+         jpg_path=options.outdir + "/" + jpgfile
          regfile=filename.replace('.fits', options.reg_postfix )
+         
+         if options.skip_existing :
+            if os.path.exists( jpg_path ) :
+               print("INFO : file %s already exists -> skipped" % (jpg_path))
+               continue
 
 
          if len(fits_list) == 1 :
@@ -230,7 +237,7 @@ if __name__ == '__main__':
 #            plt.imshow(image_data, vmin=0.00, vmax=50000, origin='lower' , cmap=plt.cm.viridis)
       
          cbar = plt.colorbar()
-         cbar.ax.tick_params(labelsize=10)
+         cbar.ax.tick_params(labelsize=60)
 
          # image title (fits file name) : 
          # OLD (before 20190909) :
@@ -277,7 +284,6 @@ if __name__ == '__main__':
          mkdir_p( options.outdir )
          # fig=plt.figure()
          # plt.plotfile(filename,(0,1),delimiter=" ",names="Frequency [MHz],T[K]",newfig=False)
-         jpg_path=options.outdir + "/" + jpgfile
          plt.savefig( jpg_path , format = options.image_format, dpi = fig.dpi)
          plt.close('all')
          file_end_time=time.time()
