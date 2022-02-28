@@ -1,0 +1,45 @@
+<html>
+
+
+
+<HEAD>
+<title>EDA2TV pages</title>
+</HEAD>
+
+<CENTER><H1>Latest EDA2 all-sky image (first prototype !) - channel 126 (FM band frequency = 98.4375 MHz)</H1></CENTER>
+
+<head>
+
+       <style> 
+            video { 
+                width:100%; 
+                height:100%; 
+            } 
+        </style> 
+
+<script language="JavaScript"><!--
+function refreshIt() {
+   if (!document.images) return;
+   document.images['edasky'].src = 'sky.png?' + Math.random();
+   setTimeout('refreshIt()',5000); // refresh every 5 secs
+}
+//--></script>
+</head>
+
+<body onLoad=" setTimeout('refreshIt()',5000)">
+
+<img src="sky.png" name="edasky">
+
+<CENTER>
+<H1>Movie since the start of the observations at FM band frequency = 98.4375 MHz</H1>
+<ul>
+        <video width="2000" height="1000" controls> <source src="sky_last_24h.mp4" type="video/mp4"> Your browser does not support the video tag. </video>
+        <li><a href="sky_last_24h.mp4">EDA2 movies (mpg file - since the observations started) </a></li>
+<!--        <li><embed src="sky_last_24h.mpg">EDA2 - last N hours movie</embed></li>       -->        
+<!--        <video width="800" height="400" controls> <source src="sky_last_24h.mpg" type="video/mpg"> Your browser does not support the video tag. </video> -->
+</ul>
+</CENTER>
+
+
+</body>
+</html>
