@@ -1,6 +1,6 @@
 #!/bin/bash
 
-start_ux=`date +%s`
+start_ux=`date +%s%1N`
 if [[ -n "$1" && "$1" != "-" ]]; then
    start_ux=$1
 fi
