@@ -1,0 +1,20 @@
+#!/bin/bash
+
+start_ux=`date +%s`
+if [[ -n "$1" && "$1" != "-" ]]; then
+   start_ux=$1
+fi
+
+wait=1
+while [[ $wait -gt 0 ]];
+do
+   ux=`date +%s%1N`
+   if [[ $ux -ge $start_ux ]]; then
+      echo "Started at ux = $ux , requested = $start_ux"
+      break
+   fi
+
+   sleep 0.01
+done
+
+python /opt/aavs/bin/daq_receiver.py -i enp216s0f0 -t 16  -d . -SX --channel_samples=262144 --continuous_period=300 --beam_channels=8 --station_samples=1048576 --description="DAQ acquisition channel 141 ( 110 MHz ) voltages and station beam" --station-config=/opt/aavs/config/eda2.yml
