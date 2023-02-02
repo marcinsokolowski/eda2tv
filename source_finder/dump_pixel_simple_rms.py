@@ -163,13 +163,21 @@ for fitsfile in fitslist_data :
       x_offset_75deg = 73
     
 
-   line = ( "%.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f\n" % (t_unix.value,\                                            # 1
-                                                 data[x_c,y_c],                                                                                                        # 2 
-                                                 data[x_c,y_c+x_offset_20deg],data[x_c,y_c+x_offset_30deg],data[x_c,y_c+x_offset_45deg],data[x_c,y_c+x_offset_75deg],\ # 3   4  5  6 
-                                                 data[x_c,y_c-x_offset_20deg],data[x_c,y_c-x_offset_30deg],data[x_c,y_c-x_offset_45deg],data[x_c,y_c-x_offset_75deg],\ # 7   8  9 10
-                                                 data[x_c+x_offset_20deg,y_c],data[x_c+x_offset_30deg,y_c],data[x_c+x_offset_45deg,y_c],data[x_c+x_offset_75deg,y_c],\ # 11 12 13 14
-                                                 data[x_c-x_offset_20deg,y_c],data[x_c-x_offset_30deg,y_c],data[x_c-x_offset_45deg,y_c],data[x_c-x_offset_75deg,y_c])\ # 15 16 17 18
+   line = ( "%.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f\n" % (t_unix.value,\
+                                                 data[x_c,y_c],\
+                                                 data[x_c,y_c+x_offset_20deg],data[x_c,y_c+x_offset_30deg],data[x_c,y_c+x_offset_45deg],data[x_c,y_c+x_offset_75deg],\
+                                                 data[x_c,y_c-x_offset_20deg],data[x_c,y_c-x_offset_30deg],data[x_c,y_c-x_offset_45deg],data[x_c,y_c-x_offset_75deg],\
+                                                 data[x_c+x_offset_20deg,y_c],data[x_c+x_offset_30deg,y_c],data[x_c+x_offset_45deg,y_c],data[x_c+x_offset_75deg,y_c],\
+                                                 data[x_c-x_offset_20deg,y_c],data[x_c-x_offset_30deg,y_c],data[x_c-x_offset_45deg,y_c],data[x_c-x_offset_75deg,y_c])\
                                                  )
+
+# 1
+# 2
+# 3   4  5  6 
+# 7   8  9 10
+# 11 12 13 14
+# 15 16 17 18    
+                                                 
    out_file.write(line)
    
    idx = idx + 1 

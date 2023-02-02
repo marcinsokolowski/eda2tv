@@ -167,7 +167,7 @@ if __name__ == '__main__':
          print("DEBUG : dim = %d vs. naxes = %d" % (dim,naxes))
    
          for ch in range(0,n_chan) :
-            jpg_path="%s/channel_%03d.jpg" % (jpg_path=options.outdir,ch)
+            jpg_path="%s/channel_%03d.jpg" % (options.outdir,ch)
             image_data = hdu_list[0].data[0,ch]
 
             if options.window is not None : 
@@ -176,7 +176,7 @@ if __name__ == '__main__':
                image_data = image_data2
    
             fig = plt.figure( figsize=(200, 60), dpi = options.dpi )
-            ax = fig.add_subplot(111, projection=wcs)
+            ax = fig.add_subplot(111) # , projection=wcs)
             mean=image_data.mean()
             rms=image_data.std()
             x_size=image_data.shape[0]

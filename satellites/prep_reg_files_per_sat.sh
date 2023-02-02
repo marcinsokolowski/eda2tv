@@ -18,5 +18,5 @@ fi
 
 # utc_grep=`echo $fits| awk '{utc=substr($1,10,15);utc_grep=substr($1,10,13);gsub("T","_",utc_grep);print utc_grep;}'`
 
-grep $satname $satfile | awk '{printf("j2000; circle %.8f %.8f 1 # %s\n",$2,$3,$8);}' > $out_reg
+grep $satname $satfile | awk '{printf("j2000; circle %.8f %.8f 1 # %s\n",$2,$3,$1);}' > $out_reg
 

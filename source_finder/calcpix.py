@@ -25,7 +25,7 @@ def get_background( data, xc_float , yc_float, r0=4, r1=6 ) :
    bkg = 0   
    l = len(values)
    if l > 0 :
-      bkg = values[l/2]
+      bkg = values[int(l/2)]
    
    return bkg         
 

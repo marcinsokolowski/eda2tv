@@ -39,6 +39,12 @@ if [[ -n "$7" && "$7" != "-" ]]; then
    radius_deg=$7
 fi
 
+outfile=${name}.txt
+if [[ -n "$8" && "$8" != "-" ]]; then
+   outfile=$8
+fi
+
+
 export PATH=~/Software/eda2tv/source_finder/:$PATH
 
 path=`which dump_pixel_radec.py`
@@ -46,8 +52,8 @@ path=`which dump_pixel_radec.py`
 
 # ls *_I.fits > fits_list_I_tmp
 
-echo "python $path $list --ra=${ra} --dec=${dec} --calc_rms --outfile=${name}.txt --min_elevation=${min_elevation} --radius=${radius_deg} --last_processed_filestamp=${name}.last_processed_file ${options}"
-python $path $list --ra=${ra} --dec=${dec} --calc_rms --outfile=${name}.txt --min_elevation=${min_elevation} --radius=${radius_deg} --last_processed_filestamp=${name}.last_processed_file ${options}
+echo "python $path $list --ra=${ra} --dec=${dec} --calc_rms --outfile=${outfile} --min_elevation=${min_elevation} --radius=${radius_deg} --last_processed_filestamp=${name}.last_processed_file ${options}"
+python $path $list --ra=${ra} --dec=${dec} --calc_rms --outfile=${outfile} --min_elevation=${min_elevation} --radius=${radius_deg} --last_processed_filestamp=${name}.last_processed_file ${options}
 
 # echo "rm -f fits_list_I_tmp"
 # rm -f fits_list_I_tmp

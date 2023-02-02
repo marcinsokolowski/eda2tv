@@ -26,11 +26,16 @@ if [[ -n "$cal_timestamp_eda2" ]]; then
    echo "DEBUG : re-calibrating EDA2 station"
    
    station=eda2
+   mkdir -p ${basedir}/${station}/data/real_time_calibration
    cd ${basedir}/${station}/data/real_time_calibration
+   pwd
+   echo "Copy EDA2 data"
+   echo "rsync --exclude 'cal.out' --exclude 'NoSunBeamCorr' -avP ${station}:/data/real_time_calibration/${cal_timestamp_eda2} ."
    rsync --exclude 'cal.out' --exclude 'NoSunBeamCorr' -avP ${station}:/data/real_time_calibration/${cal_timestamp_eda2} .
    cd ${cal_timestamp_eda2}
-   echo "~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_eda2} ${basedir}"
-   ~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_eda2} ${basedir}
+   pwd
+   echo "~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_eda2} ${basedir}/${station}/data/real_time_calibration"
+   ~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_eda2} ${basedir}/${station}/data/real_time_calibration
 else
   echo "DEBUG : re-calibration of EDA2 station is not required"
 fi
@@ -40,11 +45,15 @@ if [[ -n "$cal_timestamp_aavs2" ]]; then
    
    # aavs2 :
    station=aavs2
+   mkdir -p ${basedir}/${station}/data/real_time_calibration
    cd ${basedir}/${station}/data/real_time_calibration
+   pwd
+   echo "Copy AAVS2 data"
+   echo "rsync -avP --exclude 'cal.out' --exclude 'NoSunBeamCorr' ${station}:/data/real_time_calibration/${cal_timestamp_aavs2} ."
    rsync -avP --exclude 'cal.out' --exclude 'NoSunBeamCorr' ${station}:/data/real_time_calibration/${cal_timestamp_aavs2} .
    cd ${cal_timestamp_aavs2}
-   echo "~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_aavs2} ${basedir}"
-   ~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_aavs2} ${basedir}
+   echo "~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_aavs2} ${basedir}/${station}/data/real_time_calibration"
+   ~/github/station_beam/beam_correct_latest_cal.sh ${station} ${cal_timestamp_aavs2} ${basedir}/${station}/data/real_time_calibration
 else
    echo "DEBUG : re-calibration of AAVS2 station is not required"
 fi

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# export PATH=$PATH:/opt/install/mwa/Aegean-master/
-# export PATH=/opt/install/mwa/Aegean-master_xy:$PATH
+export PATH=$PATH:/opt/install/mwa/Aegean-master/
+export PATH=/opt/install/mwa/Aegean-master_xy:$PATH
 
 fits=1086548440145-145_1086535240_full_EE.ms_briggs-1_TH30mJy_CF10_hogbom__I_2arcmin_1000px_UV0~1000000lambda_beam_corrected.fits
 if [[ -n "$1" && "$1" != "-" ]]; then

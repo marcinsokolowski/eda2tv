@@ -32,6 +32,14 @@ if [[ -n "$6" && "$6" != "-" ]]; then
    options=$6
 fi
 
+do_plots=0
+root_path=`which root`
+if [[ -n "$root_path" ]]; then
+   echo "DEBUG : CERN root program found -> plotting enabled"
+else
+   echo "WARNING : CERN root program not found -> no plotting"
+fi
+
 inttime_ms=2000
 
 min_elevation=15
@@ -54,15 +62,21 @@ rms_i=-1000
 
 for postfix in `echo "I I_diff XX XX_diff YY YY_diff"`
 do
-   ls *_${postfix}.fits > fits_list_${postfix}_tmp
+#  ls crashes on too many files :
+#   ls *_${postfix}.fits > fits_list_${postfix}_tmp
+   find . -maxdepth 1 -name "*_${postfix}.fits" | awk '{gsub("./","");print $0;}' > fits_list_${postfix}_tmp
    
    name2=${name}_${postfix}
    
    echo "python $path fits_list_${postfix}_tmp --ra=${ra} --dec=${dec} --calc_rms --outfile=${name2}.txt --min_elevation=${min_elevation} --radius=${radius_deg} --last_processed_filestamp=${name2}.last_processed_file ${options}"
    python $path fits_list_${postfix}_tmp --ra=${ra} --dec=${dec} --calc_rms --outfile=${name2}.txt --min_elevation=${min_elevation} --radius=${radius_deg} --last_processed_filestamp=${name2}.last_processed_file ${options}
 
-   root -b -q -l "plot_flux_vs_time.C(\"${name2}.txt\")"
-   root -b -q -l "histofile.C(\"${name2}.txt\",1,1)"
+   if [[ $do_plots -gt 0 ]]; then
+      root -b -q -l "plot_flux_vs_time.C(\"${name2}.txt\")"
+      root -b -q -l "histofile.C(\"${name2}.txt\",1,1)"
+   else
+      echo "WARNING : plotting was disabled (probably CERN root program not found)"
+   fi
    
    rms=`grep $name2 sigma.txt | tail -1 | awk '{print $6}'`
    sigma_fit=`grep $name2 sigma.txt | tail -1 | awk '{print $2}'`
