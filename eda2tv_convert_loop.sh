@@ -109,7 +109,8 @@ if [[ $copy_calibration -gt 0 ]]; then
          last_cal_path=`cat /data/real_time_calibration/last_calibration/last_cal_info.txt`
          utc=`basename $last_cal_path`
          dtm_utc=`echo ${utc} | awk '{print substr($1,1,4)"-"substr($1,6,2)"-"substr($1,9,2)" "substr($1,12,2)":"substr($1,15,2)":00";}'`
-         ux=`date -u -d "${dtm_utc}" +%s`
+         # WARNING : directory name is LOCAL (AWST) time -> not -u in date command below, but it can be added if directory is changed to UTC:
+         ux=`date -d "${dtm_utc}" +%s`
          echo "INFO : setting last calibration unixtime to $ux -> merged/calibration/last_calibration.txt"
          echo $ux > merged/calibration/last_calibration.txt
       
