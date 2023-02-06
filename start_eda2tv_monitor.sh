@@ -17,6 +17,18 @@ if [[ -n "$3" && "$3" != "-" ]]; then
    start_monitoring=$3
 fi
 
+# WARNING : this paramters is not really used as it is copy_calibration parameter which decides if calibration solutions from midday calibration are used or not:
+correlated_data=1
+if [[ -n "$4" && "$4" != "-" ]]; then
+   correlated_data=$4
+fi
+if [[ $correlated_data -lt 1 && $copy_calibration -gt 0 ]]; then
+   echo "WARNING : for voltage dump data calibration solutions from midday calibration should be used -> forcing copy_calibration parameter to 0"
+   copy_calibration=0
+else
+   echo "INFO : consistency check between correlated_data=$correlated_data and copy_calibration=$copy_calibration OK -> parameters left as they are"
+fi
+
 export PATH=~/Software/eda2tv/:~/Software/eda2tv/source_finder:~/Software/miriad_scripts:$PATH
 
 # integrity checks
@@ -29,7 +41,6 @@ fi
 # station=aavs2
 station=`awk -v station_section=0 '{if(index($1,":")>0 && NF==1){if(index($1,"station")>0 ){station_section=1;}else{station_section=0;}}if(station_section>0){if($1=="name:"){station_name=$2;gsub("\"","",station_name);gsub("\r","",station_name);print tolower(station_name);}}}' /opt/aavs/config/station.yml`
 
-correlated_data=1
 freq_ch=204
 auto_freq=1
 imsize=180
@@ -49,6 +60,7 @@ echo "###################################################"
 echo "station = |$station|"
 echo "do_png_rate = $do_png_rate"
 echo "publish = $publish"
+echo "correlated_data = $correlated_data"
 echo "copy_calibration = $copy_calibration ($cal_dtm)"
 echo "###################################################"
 
@@ -110,18 +122,18 @@ else
 fi
 
 
-if [[ $correlated_data -gt 0 ]]; then 
-   echo "Starting eda2tv for correlated data in channel = $freq_ch at :"
-   date
+# if [[ $correlated_data -gt 0 ]]; then 
+echo "Starting eda2tv for correlated data in channel = $freq_ch at :"
+date
 
-   echo "nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 $eda2tv_inttime 1 ${station} 1 $imsize \"-a $n_avg\" ${do_png_rate} 0 ${publish} ${copy_calibration} > eda2tv.out 2>&1 &"   
-   nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 $eda2tv_inttime 1 ${station} 1 $imsize "-a $n_avg" ${do_png_rate} 0 ${publish} ${copy_calibration} > eda2tv.out 2>&1 &
+echo "nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 $eda2tv_inttime 1 ${station} 1 $imsize \"-a $n_avg\" ${do_png_rate} 0 ${publish} ${copy_calibration} > eda2tv.out 2>&1 &"   
+nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 $eda2tv_inttime 1 ${station} 1 $imsize "-a $n_avg" ${do_png_rate} 0 ${publish} ${copy_calibration} > eda2tv.out 2>&1 &
 
-   echo "sleep 5"   
-   sleep 5
-else
-   echo "ERROR : not yet implemented for data other than correlated"
-fi
+echo "sleep 5"   
+sleep 5
+# else
+#   echo "ERROR : not yet implemented for data other than correlated"
+# fi
 
 
 if [[ $start_diff -gt 0 ]]; then 
