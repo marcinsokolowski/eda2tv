@@ -103,8 +103,15 @@ if [[ $copy_calibration -gt 0 ]]; then
       echo "WARNING : calibration files not provided -> using defaults, which might be incorrect (flux scale for example)"
    
       if [[ ! -d merged/chan_${ch}.uv ]]; then
+         mkdir -p merged/calibration/
          echo "cp -a /data/real_time_calibration/last_calibration/chan_${ch}_??.uv merged/"
          cp -a /data/real_time_calibration/last_calibration/chan_${ch}_??.uv merged/
+         last_cal_path=`cat /data/real_time_calibration/last_calibration/last_cal_info.txt`
+         utc=`basename $last_cal_path`
+         dtm_utc=`echo ${utc} | awk '{print substr($1,1,4)"-"substr($1,6,2)"-"substr($1,9,2)" "substr($1,12,2)":"substr($1,15,2)":00";}'`
+         ux=`date -u -d "${dtm_utc}" +%s`
+         echo "INFO : setting last calibration unixtime to $ux -> merged/calibration/last_calibration.txt"
+         echo $ux > merged/calibration/last_calibration.txt
       
          echo "INFO : new version only copying _XX.uv and _YY.uv cal. solutions"
       else
