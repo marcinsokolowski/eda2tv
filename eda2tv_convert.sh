@@ -81,6 +81,15 @@ if [[ -n "${13}" && "${13}" != "-" ]]; then
    process_last_hdf5_file=${13}
 fi
 
+update_calibration=1
+if [[ -n "${14}" && "${14}" != "-" ]]; then
+   update_calibration=${14}
+fi
+
+max_calibration_age_in_seconds=43200
+if [[ -n "${15}" && "${15}" != "-" ]]; then
+   max_calibration_age_in_seconds=${15}
+fi
 
 echo "##################################"
 echo "PARAMETERS:"
@@ -89,6 +98,7 @@ echo "ch      = $freq_ch (num value = $ch_num)"
 echo "imsize  = $imsize"
 echo "publish = $publish"
 echo "process_last_hdf5_file = $process_last_hdf5_file"
+echo "update_calibration = $update_calibration"
 echo "##################################"
 
 
@@ -293,6 +303,47 @@ do
          
          n_new_processed=$(($n_new_processed+1))
       fi
+      
+      # optinally automatically update calibration :
+      if [[ $update_calibration -gt 0 ]]; then # Changed to ALWAYS false because it is done in eda2tv_convert.sh as currently hdf5 file is required to convert with Sun in the phase centre !
+         echo "INFO : updating calibration is required"
+         
+         last_calibration_ux=-1
+         diff_ux=1000000000
+         if [[ -s calibration/last_calibration.txt ]]; then
+            last_calibration_ux=`cat calibration/last_calibration.txt`
+            echo "INFO : last calibration ux = $last_calibration_ux"
+         fi
+         
+         cal_hdf5_file=""
+         cal_hdf5=0
+         for hdf5_file in `cat new_hdf5_list.txt`
+         do
+            hdf5_info_file=${hdf5_file}_info
+            
+            hdf5_uxtime=`grep "Unixtime start" $hdf5_info_file | awk '{printf("%d\n",$4);}'`
+            diff_ux=$(($hdf5_uxtime-$last_calibration_ux))
+            if [[ $diff_ux -gt $max_calibration_age_in_seconds ]]; then
+               echo "INFO : $hdf5_file will be used for calibration"
+               cal_hdf5_file=$hdf5_file
+               cal_hdf5=1
+               break
+            fi
+         done
+         
+         if [[ $cal_hdf5 -gt 0 ]]; then
+            echo "INFO : calibrating HDF5 file $cal_hdf5_file"
+            path=`pwd`
+            
+            echo "miriad_calibrate_corr.sh 1 ${freq_ch} $cal_hdf5_file SunCal ${path}/calibration/"
+            miriad_calibrate_corr.sh 1 ${freq_ch} $cal_hdf5_file SunCal ${path}/calibration/
+         else
+            echo "INFO : no HDF5 file requires calibration"
+         fi
+      else
+         echo "WARNING : update of calibration is not required"
+      fi
+
     
       # also does (XX+YY) -> I :
       # convert every ${movie_png_rate} image to png 
