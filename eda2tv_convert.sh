@@ -332,7 +332,7 @@ do
                   break
                fi
             else
-               echo "INFO : $hdf5_uxtime -> Hour = $dtm_utc_hour UTC (not Sun transit time)"
+               echo "INFO : $hdf5_uxtime -> Hour = $hdf5_utc_hour UTC (not Sun transit time)"
             fi
          done
                   
