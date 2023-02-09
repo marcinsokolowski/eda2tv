@@ -344,8 +344,9 @@ do
             echo "INFO : calibrating HDF5 file $cal_hdf5_file"
             path=`pwd`
             
-            echo "miriad_calibrate_corr.sh 1 ${freq_ch} $cal_hdf5_file SunCal ${path}/calibration/"
-            miriad_calibrate_corr.sh 1 ${freq_ch} $cal_hdf5_file SunCal ${path}/calibration/
+            # only calibrate 10th uvfits file in the HDF5 file:
+            echo "miriad_calibrate_corr.sh 1 ${freq_ch} $cal_hdf5_file SunCal ${path}/calibration/ 10"
+            miriad_calibrate_corr.sh 1 ${freq_ch} $cal_hdf5_file SunCal ${path}/calibration/ 10
          else
             echo "INFO : no HDF5 file requires calibration"
          fi
