@@ -324,7 +324,7 @@ do
             hdf5_uxtime=`grep "Unixtime start" $hdf5_info_file | awk '{printf("%d\n",$4);}'`
             diff_ux=$(($hdf5_uxtime-$last_calibration_ux))
             hdf5_utc_hour=`date -u -d "1970-01-01 UTC $hdf5_uxtime seconds" +"%H"`
-            if [[ $dtm_utc_hour == "04" ]]; then
+            if [[ $hdf5_utc_hour == "04" ]]; then
                if [[ $diff_ux -gt $max_calibration_age_in_seconds ]]; then
                   echo "INFO : $hdf5_file will be used for calibration"
                   cal_hdf5_file=$hdf5_file
