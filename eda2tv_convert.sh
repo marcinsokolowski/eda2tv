@@ -318,10 +318,11 @@ do
          cal_hdf5_file=""
          cal_hdf5=0
          for hdf5_file in `cat new_hdf5_list.txt`
-         do
+         do            
             hdf5_info_file=${hdf5_file}_info
             
             hdf5_uxtime=`grep "Unixtime start" $hdf5_info_file | awk '{printf("%d\n",$4);}'`
+            echo "DEBUG : $hdf5_file -> unixtime = $hdf5_uxtime"
             diff_ux=$(($hdf5_uxtime-$last_calibration_ux))
             hdf5_utc_hour=`date -u -d "1970-01-01 UTC $hdf5_uxtime seconds" +"%H"`
             if [[ $hdf5_utc_hour == "04" ]]; then
