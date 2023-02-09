@@ -322,7 +322,7 @@ do
             
             echo "DEBUG : $hdf5_file -> unixtime = $hdf5_uxtime -> $hdf5_utc_hour UTC -> compare diff_ux = $diff_ux vs. $max_calibration_age_in_seconds"            
             if [[ $hdf5_utc_hour == "04" || $hdf5_utc_hour == "03" ]]; then # during testing 4 or 3 UTC is allowed for calibration
-               if [[ $diff_ux -gt $max_calibration_age_in_seconds ]]; then 
+               if [[ $diff_ux -gt $max_calibration_age_in_seconds || $diff_ux -lt 0 ]]; then 
                   echo "INFO : $hdf5_file will be used for calibration"
                   cal_hdf5_file=$hdf5_file
                   cal_hdf5=1
