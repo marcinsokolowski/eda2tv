@@ -86,7 +86,7 @@ if [[ -n "${14}" && "${14}" != "-" ]]; then
    update_calibration=${14}
 fi
 
-max_calibration_age_in_seconds=43200
+max_calibration_age_in_seconds=600 # 43200 changed to 10min just for testing !
 if [[ -n "${15}" && "${15}" != "-" ]]; then
    max_calibration_age_in_seconds=${15}
 fi
@@ -322,15 +322,18 @@ do
             hdf5_info_file=${hdf5_file}_info
             
             hdf5_uxtime=`grep "Unixtime start" $hdf5_info_file | awk '{printf("%d\n",$4);}'`
-            echo "DEBUG : $hdf5_file -> unixtime = $hdf5_uxtime"
             diff_ux=$(($hdf5_uxtime-$last_calibration_ux))
             hdf5_utc_hour=`date -u -d "1970-01-01 UTC $hdf5_uxtime seconds" +"%H"`
+            
+            echo "DEBUG : $hdf5_file -> unixtime = $hdf5_uxtime -> $hdf5_utc_hour UTC -> compare diff_ux = $diff_ux vs. $max_calibration_age_in_seconds"            
             if [[ $hdf5_utc_hour == "04" ]]; then
                if [[ $diff_ux -gt $max_calibration_age_in_seconds ]]; then
                   echo "INFO : $hdf5_file will be used for calibration"
                   cal_hdf5_file=$hdf5_file
                   cal_hdf5=1
                   break
+               else
+                  echo "DEBUG diff_ux = $diff_ux is <= limit = $max_calibration_age_in_seconds seconds -> HDF5 not used for calibration"
                fi
             else
                echo "INFO : $hdf5_uxtime -> Hour = $hdf5_utc_hour UTC (not Sun transit time)"
