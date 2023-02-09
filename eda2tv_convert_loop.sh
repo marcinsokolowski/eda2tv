@@ -81,6 +81,16 @@ if [[ -n "${13}" && "${13}" != "-" ]]; then
    copy_calibration=${13}
 fi
 
+update_calibration=1
+if [[ -n "${14}" && "${14}" != "-" ]]; then
+   update_calibration=${14}
+fi
+
+max_calibration_age_in_seconds=43200 # 43200 changed to 10min just for testing !
+if [[ -n "${15}" && "${15}" != "-" ]]; then
+   max_calibration_age_in_seconds=${15}
+fi
+
 
 echo "##################################"
 echo "PARAMETERS:"
@@ -89,6 +99,8 @@ echo "ch      = $ch (as number = $ch_num)"
 echo "imsize  = $imsize"
 echo "publish = $publish"
 echo "copy_calibration = $copy_calibration"
+echo "update_calibration = $update_calibration"
+echo "max_calibration_age_in_seconds = $max_calibration_age_in_seconds"
 echo "##################################"
 
 
@@ -147,8 +159,8 @@ do
    echo
    date
    
-   echo "eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} \"${convert_options}\" ${movie_png_rate} ${reprocess_all} ${publish}"
-   eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} "${convert_options}" ${movie_png_rate} ${reprocess_all} ${publish}
+   echo "eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} \"${convert_options}\" ${movie_png_rate} ${reprocess_all} ${publish} - $update_calibration $max_calibration_age_in_seconds"
+   eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} "${convert_options}" ${movie_png_rate} ${reprocess_all} ${publish} - $update_calibration $max_calibration_age_in_seconds
    
    # only first iteration is requested to re-process old data (for example to re-run the pipeline off-line)
    # then set flag to 0

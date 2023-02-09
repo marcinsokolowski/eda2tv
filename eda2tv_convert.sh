@@ -99,6 +99,7 @@ echo "imsize  = $imsize"
 echo "publish = $publish"
 echo "process_last_hdf5_file = $process_last_hdf5_file"
 echo "update_calibration = $update_calibration"
+echo "max_calibration_age_in_seconds = $max_calibration_age_in_seconds"
 echo "##################################"
 
 
