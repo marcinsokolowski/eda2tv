@@ -86,7 +86,7 @@ if [[ -n "${14}" && "${14}" != "-" ]]; then
    update_calibration=${14}
 fi
 
-max_calibration_age_in_seconds=600 # 43200 changed to 10min just for testing !
+max_calibration_age_in_seconds=43200 # 43200 changed to 10min just for testing !
 if [[ -n "${15}" && "${15}" != "-" ]]; then
    max_calibration_age_in_seconds=${15}
 fi
