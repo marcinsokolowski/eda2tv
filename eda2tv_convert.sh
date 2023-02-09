@@ -347,6 +347,29 @@ do
             # only calibrate 10th uvfits file in the HDF5 file:
             echo "miriad_calibrate_corr.sh 1 ${freq_ch} $cal_hdf5_file SunCal ${path}/calibration/ 10"
             miriad_calibrate_corr.sh 1 ${freq_ch} $cal_hdf5_file SunCal ${path}/calibration/ 10
+            
+            ux=`date +%s`
+            echo "mkdir -p ${path}/calibration_backup/${ux}"
+            mkdir -p ${path}/calibration_backup/${ux}
+
+            # move currently used calibration to a backup directory :
+            echo "mv chan_${freq_ch}_??.uv ${path}/calibration_backup/${ux}"
+            mv chan_${freq_ch}_??.uv ${path}/calibration_backup/${ux}
+            
+            echo "mv chan_${freq_ch}.uv ${path}/calibration_backup/${ux}"
+            mv chan_${freq_ch}.uv ${path}/calibration_backup/${ux}
+            
+            # update currently used calibration:
+            echo "cp -a ${path}/calibration/cal_XX.uv chan_${freq_ch}_XX.uv"
+            cp -a ${path}/calibration/cal_XX.uv chan_${freq_ch}_XX.uv
+
+            echo "cp -a ${path}/calibration/cal_YY.uv chan_${freq_ch}_YY.uv"
+            cp -a ${path}/calibration/cal_YY.uv chan_${freq_ch}_YY.uv
+            
+            if [[ -d ${path}/calibration/cal.uv ]]; then
+               echo "cp -a ${path}/calibration/cal.uv chan_${freq_ch}.uv"
+               cp -a ${path}/calibration/cal.uv chan_${freq_ch}.uv
+            fi
          else
             echo "INFO : no HDF5 file requires calibration"
          fi
