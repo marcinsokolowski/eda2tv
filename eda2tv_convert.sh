@@ -81,14 +81,9 @@ if [[ -n "${13}" && "${13}" != "-" ]]; then
    process_last_hdf5_file=${13}
 fi
 
-update_calibration=1
-if [[ -n "${14}" && "${14}" != "-" ]]; then
-   update_calibration=${14}
-fi
-
 max_calibration_age_in_seconds=43200 # 43200 changed to 10min just for testing !
-if [[ -n "${15}" && "${15}" != "-" ]]; then
-   max_calibration_age_in_seconds=${15}
+if [[ -n "${14}" && "${14}" != "-" ]]; then
+   max_calibration_age_in_seconds=${14}
 fi
 
 echo "##################################"
@@ -98,7 +93,6 @@ echo "ch      = $freq_ch (num value = $ch_num)"
 echo "imsize  = $imsize"
 echo "publish = $publish"
 echo "process_last_hdf5_file = $process_last_hdf5_file"
-echo "update_calibration = $update_calibration"
 echo "max_calibration_age_in_seconds = $max_calibration_age_in_seconds"
 echo "##################################"
 
@@ -306,7 +300,7 @@ do
       fi
       
       # optinally automatically update calibration :
-      if [[ $update_calibration -gt 0 ]]; then # Changed to ALWAYS false because it is done in eda2tv_convert.sh as currently hdf5 file is required to convert with Sun in the phase centre !
+      if [[ $max_calibration_age_in_seconds -gt 0 ]]; then # Changed to ALWAYS false because it is done in eda2tv_convert.sh as currently hdf5 file is required to convert with Sun in the phase centre !
          echo "INFO : updating calibration is required"
          
          last_calibration_ux=-1
