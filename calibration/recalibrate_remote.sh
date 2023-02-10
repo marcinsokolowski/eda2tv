@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export PATH=~/github/station_beam/scripts/:~/github/station_beam/python:$PATH
+
 # /media/msok/0754e982-0adb-4e33-80cc-f81dda1580c8/aavs2/data/real_time_calibration
 
 # Eda2 : 2020_04_28-12:39
