@@ -29,7 +29,8 @@ else
    echo "INFO : consistency check between correlated_data=$correlated_data and copy_calibration=$copy_calibration OK -> parameters left as they are"
 fi
 
-max_calibration_age_in_seconds=43200 # 43200 changed to 10min just for testing !
+# TODO : 2023-03-15 - disabled as it messes something up and overwrites output .uv or .fits files not just in SunCal but also in merged/ itself
+max_calibration_age_in_seconds=-43200 # 43200 changed to 10min just for testing !
 if [[ -n "$5" && "$5" != "-" ]]; then
    max_calibration_age_in_seconds=$5
 fi
