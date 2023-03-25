@@ -5,7 +5,7 @@ Real-time imaging for EDA2 station
    sudo apt-get install mencoder
    sudo apt-get install wcslib-tools
 
-Acknowledgements
+# Acknowledgements
 
 If you have been using this software or the related web interface for your research. Please, cite the paper:
 
