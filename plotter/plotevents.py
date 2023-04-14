@@ -4,6 +4,7 @@
 
 from __future__ import print_function
 
+import gc # garbage collector
 import matplotlib
 # matplotlib.use('Agg')
 
@@ -81,6 +82,7 @@ def parse_options(idx=0):
    usage+='\tPlotting candidates\n'
    parser = OptionParser(usage=usage,version=1.00)
 
+   parser.add_option('--all',action="store_true",dest="all",default=False, help="Create all images (even without candidates) [default %s]")
    parser.add_option('--dpi',dest="dpi",default=100, help="Image DPI [default %default]",type="int") # 25
    parser.add_option('--out_format','--out_type','--ext','--out_image_type',dest="image_format",default="jpg", help="Output image type [default %default]")
    parser.add_option('--outdir','--out_dir','--output_dir','--dir',dest="outdir",default="images/",help="Output directory [default %default]")
@@ -113,6 +115,8 @@ if __name__ == '__main__':
    print("Read filenames from list file %s:" % (listfile))
    fits_file_list = read_list_file( listfile )
    for fitsfile in fits_file_list :
+      gc.collect() # explicit invokation of garbage collector to clean-up memory (otherwise uses memory like crazy!)
+                   # see : https://stackoverflow.com/questions/1316767/how-can-i-explicitly-free-memory-in-python
       candfile=fitsfile.replace(".fits","_cand.txt")
       imagefile=fitsfile.replace(".fits","_cand.jpg")
       print("%s -> %s" % (fitsfile,candfile))   
@@ -120,15 +124,20 @@ if __name__ == '__main__':
       
       Az=[]
       El=[]
-      if candidates is not None and len(candidates) > 0 :
+      if (candidates is not None and len(candidates) > 0) or options.all :
          for cand in candidates :
             Az.append(cand.azim_deg)
             El.append(cand.elev_deg)
-         
-      Az= np.array(Az)
-      El= np.array(El)
+      
+                  
+         Az= np.array(Az)
+         El= np.array(El)
 
-      generate_plot(Az,El,options=options,imagefile=imagefile)   
+         generate_plot(Az,El,options=options,imagefile=imagefile)   
+         candidates=None         
+         gc.collect()
+      else :
+         print("\tNo candidates in %s -> ignored" % (candfile))
 #      sys.exit(0)
          
       
