@@ -82,6 +82,7 @@ def parse_options(idx=0):
    usage+='\tPlotting candidates\n'
    parser = OptionParser(usage=usage,version=1.00)
 
+   parser.add_option('--in_format','--input_format','--informat','--inputformat',dest="input_format",default="events", help="Input format [default %default]. events or sattest")
    parser.add_option('--all',action="store_true",dest="all",default=False, help="Create all images (even without candidates) [default %s]")
    parser.add_option('--dpi',dest="dpi",default=100, help="Image DPI [default %default]",type="int") # 25
    parser.add_option('--out_format','--out_type','--ext','--out_image_type',dest="image_format",default="jpg", help="Output image type [default %default]")
@@ -108,8 +109,9 @@ if __name__ == '__main__':
    print("######################################################")
    print("PARAMETERS :")  
    print("######################################################")
-   print("List file = %s" % (listfile))
-   print("Outdir   = %s" % (options.outdir))   
+   print("List file    = %s" % (listfile))
+   print("Input format = %s" % (options.input_format))
+   print("Outdir       = %s" % (options.outdir))      
    print("######################################################")
 
    print("Read filenames from list file %s:" % (listfile))
@@ -118,9 +120,15 @@ if __name__ == '__main__':
       gc.collect() # explicit invokation of garbage collector to clean-up memory (otherwise uses memory like crazy!)
                    # see : https://stackoverflow.com/questions/1316767/how-can-i-explicitly-free-memory-in-python
       candfile=fitsfile.replace(".fits","_cand.txt")
-      imagefile=fitsfile.replace(".fits","_cand.jpg")
-      print("%s -> %s" % (fitsfile,candfile))   
-      candidates=eda2_aavs2_concidence.read_candidate_file( candfile )
+      candidates=None
+      if options.input_format == "sattest" :
+         imagefile=fitsfile.replace(".txt","_cand.jpg")         
+         print("%s -> %s" % (fitsfile,candfile))
+         candidates=eda2_aavs2_concidence.read_sattest_file( candfile, 0.00, 0.00 )
+      else : 
+         imagefile=fitsfile.replace(".fits","_cand.jpg")
+         print("%s -> %s" % (fitsfile,candfile))
+         candidates=eda2_aavs2_concidence.read_candidate_file( candfile )
       
       Az=[]
       El=[]

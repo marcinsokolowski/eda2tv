@@ -393,6 +393,81 @@ def read_sattest_output( filename, transient_ra_deg, transient_dec_deg, sat_radi
 
    return ( closest_sat , min_ang_dist_arcsec , satlist, all_above_horizon_count, above_min_elevation_count, min_ang_dist_name )
 
+
+def read_sattest_file( filename, sat_radius_deg=360.00, min_elevation=0.00, max_sat_distance_km=1e20 ) : 
+   print("read_data(%s) ..." % (filename))
+   
+   if not os.path.exists( filename ) :
+      print("ERROR : could not read satellite info file %s" % (filename))
+      return (None,0.00,None,None,None,None)
+   
+   file=open(filename,'r')
+
+   # reads the entire file into a list of strings variable data :
+   data=file.readlines()
+   # print data
+   
+   candidates=[]
+   closest_sat = None
+   min_ang_dist_arcsec = 1e20
+   min_ang_dist_name = None
+   all_above_horizon_count = 0
+   above_min_elevation_count = 0
+
+   for line in data : 
+      line=line.rstrip()
+      words = line.split(' ')
+
+      if line[0] == '#' or line[0]=='\n' or len(line) <= 0 or len(words)<4 :
+         continue
+
+#      print "line = %s , words = %d" % (line,len(words))
+
+      if line[0] != "#" :
+         ut_dtm  = words[0+0]
+         ra_degs = float( words[1+0] )
+         dec_degs = float( words[2+0] )
+         azim_degs = float( words[3+0] )
+         elev_degs = float( words[4+0] )
+         alt_km = float( words[5+0] )
+         uxtime = float( words[6+0] )
+         satname = words[7+0]
+         ha_degs = float( words[8+0] )
+         is_geostat = int( words[9+0] )
+         
+         if alt_km > max_sat_distance_km : 
+            # skipping satellites further than the limit
+            continue
+         
+         # count all satellites above horizon :
+         all_above_horizon_count += 1 
+         if elev_degs > min_elevation :
+            above_min_elevation_count += 1 
+         
+         # ang_dist_arcsec = skysources.angdist_arcsec( ra_degs, dec_degs, transient_ra_deg, transient_dec_deg )         
+         # new_min_distance = False
+         # if ang_dist_arcsec < min_ang_dist_arcsec :
+         #   # find minimum distance satellite :
+         #   min_ang_dist_arcsec = ang_dist_arcsec
+         #   min_ang_dist_name = satname
+         #   new_min_distance = True
+         #
+         #if (ang_dist_arcsec/3600.00) <= sat_radius_deg :
+         #   new_sat = satellites.Satellite( name=satname, ra_degs=ra_degs, dec_degs=dec_degs, azim_deg=azim_degs, elev_deg=elev_degs, ut_dtm=ut_dtm, is_geostat=is_geostat, uxtime=uxtime, file=filename )
+         #   if new_min_distance : # checked ang_dist_arcsec < min_ang_dist_arcsec : earlier and already over-written min_ang_dist_arcsec := ang_dist_arcsec
+         #      closest_sat = new_sat 
+         #
+         #   # create a list of all satellites closer to required distance :
+         #   satlist.append( new_sat )
+         candidates.append( skysources.Source( name=satname, ra=ra_degs, dec=dec_degs,  flux=-1000.00, azim_deg=azim_degs, elev_deg=elev_degs, uxtime=uxtime, file=filename ) )
+         
+            
+
+   print("Read %d lines from file %s" % (len(candidates),filename))
+
+   return ( candidates )
+
+
 def count_rfi( candidates, treshold ) :
    count = 0
    for cand1 in candidates :   
