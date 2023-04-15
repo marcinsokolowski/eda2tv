@@ -78,6 +78,7 @@ do
       # !!!??? does not work - probably because of while with read there !!!???
       # wait_for_keypress 
       # read -p "Press any key to continue... " -n 1 -s -t 100000 -r stdin
+      # wait_for_keypress.sh
       sleep 1
    else
       echo "DEBUG : comment skipped"
