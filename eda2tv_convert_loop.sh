@@ -86,6 +86,11 @@ if [[ -n "${14}" && "${14}" != "-" ]]; then
    max_calibration_age_in_seconds=${14}
 fi
 
+remote_path="aavs1-server:/exports/eda/"
+if [[ -n "${15}" && "${15}" != "-" ]]; then
+   remote_path="${15}"
+fi
+
 
 echo "##################################"
 echo "PARAMETERS:"
@@ -95,6 +100,7 @@ echo "imsize  = $imsize"
 echo "publish = $publish"
 echo "copy_calibration = $copy_calibration"
 echo "max_calibration_age_in_seconds = $max_calibration_age_in_seconds"
+echo "remote_path = $remote_path"
 echo "##################################"
 
 
@@ -139,11 +145,15 @@ if [[ $publish -gt 0 ]]; then
    chmod +x sed!
    ./sed!
 
-   echo "ssh aavs1-server \"mkdir -p /exports/eda/${station_name}/tv/\""
-   ssh aavs1-server "mkdir -p /exports/eda/${station_name}/tv/"
+   if [[ $remote_path == "aavs1-server:/exports/eda/" ]]; then
+      echo "ssh aavs1-server \"mkdir -p /exports/eda/${station_name}/tv/\""
+      ssh aavs1-server "mkdir -p /exports/eda/${station_name}/tv/"
+   else
+      echo "INFO : remote_path = $remote_path, directory creating skipped"
+   fi
 
-   echo "scp merged/sky.html aavs1-server:/exports/eda/${station_name}/tv/"
-   scp merged/sky.html aavs1-server:/exports/eda/${station_name}/tv/
+   echo "scp merged/sky.html ${remote_path}/${station_name}/tv/"
+   scp merged/sky.html ${remote_path}/${station_name}/tv/
 else
    echo "WARNING : publishing of html and images on WWW server is not required"
 fi   

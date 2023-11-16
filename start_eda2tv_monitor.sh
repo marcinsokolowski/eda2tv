@@ -35,6 +35,11 @@ if [[ -n "$5" && "$5" != "-" ]]; then
    max_calibration_age_in_seconds=$5
 fi
 
+remote_path="aavs1-server:/exports/eda/"
+if [[ -n "$6" && "$6" != "-" ]]; then
+   remote_path="$6"
+fi
+
 
 export PATH=~/Software/eda2tv/:~/Software/eda2tv/source_finder:~/Software/miriad_scripts:$PATH
 
@@ -69,6 +74,7 @@ echo "do_png_rate = $do_png_rate"
 echo "publish = $publish"
 echo "correlated_data = $correlated_data"
 echo "copy_calibration = $copy_calibration ($cal_dtm)"
+echo "remote_path = $remote_path"
 echo "###################################################"
 
 # auto-detect frequency channel :
@@ -133,8 +139,8 @@ fi
 echo "Starting eda2tv for correlated data in channel = $freq_ch at :"
 date
 
-echo "nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 $eda2tv_inttime 1 ${station} 1 $imsize \"-a $n_avg\" ${do_png_rate} 0 ${publish} ${copy_calibration} ${max_calibration_age_in_seconds} > eda2tv.out 2>&1 &"   
-nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 $eda2tv_inttime 1 ${station} 1 $imsize "-a $n_avg" ${do_png_rate} 0 ${publish} ${copy_calibration} ${max_calibration_age_in_seconds} > eda2tv.out 2>&1 &
+echo "nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 $eda2tv_inttime 1 ${station} 1 $imsize \"-a $n_avg\" ${do_png_rate} 0 ${publish} ${copy_calibration} ${max_calibration_age_in_seconds} ${remote_path} > eda2tv.out 2>&1 &"   
+nohup eda2tv_convert_loop.sh ${freq_ch} 0 -1 $eda2tv_inttime 1 ${station} 1 $imsize "-a $n_avg" ${do_png_rate} 0 ${publish} ${copy_calibration} ${max_calibration_age_in_seconds} ${remote_path} > eda2tv.out 2>&1 &
 
 echo "sleep 5"   
 sleep 5
