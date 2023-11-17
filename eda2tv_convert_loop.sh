@@ -149,7 +149,9 @@ if [[ $publish -gt 0 ]]; then
       echo "ssh aavs1-server \"mkdir -p /exports/eda/${station_name}/tv/\""
       ssh aavs1-server "mkdir -p /exports/eda/${station_name}/tv/"
    else
-      echo "INFO : remote_path = $remote_path, directory creating skipped"
+      # echo "INFO : remote_path = $remote_path, directory creating skipped"
+      echo "mkdir $remote_path"
+      mkdir $remote_path
    fi
 
    echo "scp merged/sky.html ${remote_path}/${station_name}/tv/"
