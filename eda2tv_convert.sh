@@ -415,8 +415,8 @@ echo "cp merged_hdf5_list.txt merged_hdf5_list.last_processed"
 cp merged_hdf5_list.txt merged_hdf5_list.last_processed
 
 if [[ $n_new_processed -gt 0 ]]; then
-   echo "eda2tv_make_movie.sh ${freq_ch} ${station_name}" # ${movie_png_rate}"
-   eda2tv_make_movie.sh ${freq_ch} ${station_name} # ${movie_png_rate} not used here, but at level of conversion from FITS to jpg 
+   echo "eda2tv_make_movie.sh ${freq_ch} ${station_name} - - - - ${remote_path}" # ${movie_png_rate}"
+   eda2tv_make_movie.sh ${freq_ch} ${station_name} - - - - ${remote_path} # ${movie_png_rate} not used here, but at level of conversion from FITS to jpg 
 else
    echo "WARNING : no new files processed -> nothing to copy to www server"
 fi   
