@@ -165,8 +165,8 @@ do
    echo
    date
    
-   echo "eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} \"${convert_options}\" ${movie_png_rate} ${reprocess_all} ${publish} - $max_calibration_age_in_seconds"
-   eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} "${convert_options}" ${movie_png_rate} ${reprocess_all} ${publish} - $max_calibration_age_in_seconds
+   echo "eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} \"${convert_options}\" ${movie_png_rate} ${reprocess_all} ${publish} - $max_calibration_age_in_seconds $remote_path"
+   eda2tv_convert.sh $ch $voltages $process_all $inttime $n_avg $station_name $use_full_files ${imsize} "${convert_options}" ${movie_png_rate} ${reprocess_all} ${publish} - $max_calibration_age_in_seconds $remote_path
    
    # only first iteration is requested to re-process old data (for example to re-run the pipeline off-line)
    # then set flag to 0

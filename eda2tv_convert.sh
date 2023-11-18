@@ -86,6 +86,12 @@ if [[ -n "${14}" && "${14}" != "-" ]]; then
    max_calibration_age_in_seconds=${14}
 fi
 
+remote_path="aavs1-server:/exports/eda/"
+if [[ -n "${15}" && "${15}" != "-" ]]; then
+   remote_path="${15}"
+fi
+
+
 echo "##################################"
 echo "PARAMETERS:"
 echo "##################################"
@@ -94,6 +100,7 @@ echo "imsize  = $imsize"
 echo "publish = $publish"
 echo "process_last_hdf5_file = $process_last_hdf5_file"
 echo "max_calibration_age_in_seconds = $max_calibration_age_in_seconds"
+echo "remote_path = $remote_path"
 echo "##################################"
 
 
@@ -386,8 +393,8 @@ do
       echo "Last image = $last_image"
    
       if [[ $publish -gt 0 ]]; then
-         echo "scp $last_image aavs1-server:/exports/eda/${station_name}/tv/sky.png"
-         scp $last_image aavs1-server:/exports/eda/${station_name}/tv/sky.png              
+         echo "scp $last_image ${remote_path}/${station_name}/tv/sky.png"
+         scp $last_image ${remote_path}/${station_name}/tv/sky.png              
       else
          echo "WARNING : publishing of results on the WWW server is not required"         
       fi

@@ -30,6 +30,10 @@ if [[ -n "$6" && "$6" != "-" ]]; then
    stokes=${6}
 fi
 
+remote_path="aavs1-server:/exports/eda/"
+if [[ -n "$7" && "$7" != "-" ]]; then
+   remote_path="$7"
+fi
 
 echo "#############################################"
 echo "PARAMETERS "
@@ -40,6 +44,7 @@ echo "movie_png_rate = $movie_png_rate"
 echo "dir = $dir"
 echo "publish = $publish"
 echo "stokes  = $stokes"
+echo "remote_path = $remote_path"
 echo "#############################################"
 
 
@@ -71,11 +76,11 @@ ffmpeg -framerate 25 -i chan_${freq_ch}_${stokes}_%6d.png -c:v libx264 -vf "draw
 echo $freq_ch > channel.txt
 
 if [[ $publish -gt 0 ]]; then
-   echo "scp sky_last_24h.mp4 aavs1-server:/exports/eda/${station_name}/tv/"
-   scp sky_last_24h.mp4 aavs1-server:/exports/eda/${station_name}/tv/
+   echo "scp sky_last_24h.mp4 ${remote_path}/${station_name}/tv/"
+   scp sky_last_24h.mp4 ${remote_path}/${station_name}/tv/
 
-   echo "scp channel.txt aavs1-server:/exports/eda/${station_name}/tv/"
-   scp channel.txt aavs1-server:/exports/eda/${station_name}/tv/
+   echo "scp channel.txt ${remote_path}/${station_name}/tv/"
+   scp channel.txt ${remote_path}/${station_name}/tv/
 else
    echo "WARNING : publishing of results on the WWW server is not required"
 fi
