@@ -393,8 +393,8 @@ do
       echo "Last image = $last_image"
    
       if [[ $publish -gt 0 ]]; then
-         echo "scp $last_image ${remote_path}/${station_name}/tv/sky.png"
-         scp $last_image ${remote_path}/${station_name}/tv/sky.png              
+         echo "rsync -avP $last_image ${remote_path}/${station_name}/tv/sky.png"
+         rsync -avP $last_image ${remote_path}/${station_name}/tv/sky.png              
       else
          echo "WARNING : publishing of results on the WWW server is not required"         
       fi

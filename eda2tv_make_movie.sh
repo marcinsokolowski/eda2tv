@@ -76,11 +76,11 @@ ffmpeg -framerate 25 -i chan_${freq_ch}_${stokes}_%6d.png -c:v libx264 -vf "draw
 echo $freq_ch > channel.txt
 
 if [[ $publish -gt 0 ]]; then
-   echo "scp sky_last_24h.mp4 ${remote_path}/${station_name}/tv/"
-   scp sky_last_24h.mp4 ${remote_path}/${station_name}/tv/
+   echo "rsync -avP sky_last_24h.mp4 ${remote_path}/${station_name}/tv/"
+   rsync -avP sky_last_24h.mp4 ${remote_path}/${station_name}/tv/
 
-   echo "scp channel.txt ${remote_path}/${station_name}/tv/"
-   scp channel.txt ${remote_path}/${station_name}/tv/
+   echo "rsync -avP channel.txt ${remote_path}/${station_name}/tv/"
+   rsync -avP channel.txt ${remote_path}/${station_name}/tv/
 else
    echo "WARNING : publishing of results on the WWW server is not required"
 fi
