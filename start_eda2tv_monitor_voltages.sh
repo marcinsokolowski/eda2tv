@@ -139,8 +139,8 @@ echo $freq_ch >> merged/channel.txt
 echo "Starting eda2tv for correlated data in channel = $freq_ch at :"
 date
 
-echo "nohup eda2tv_convert_loop.sh ${freq_ch} 1 0 $eda2tv_inttime 4096 ${station} 1 $imsize \"-a $n_avg\" ${do_png_rate} 0 ${publish} - -  ${remote_path} > eda2tv.out 2>&1 &"   
-nohup eda2tv_convert_loop.sh ${freq_ch} 1 0 $eda2tv_inttime 4096 ${station} 1 $imsize "-a $n_avg" ${do_png_rate} 0 ${publish} - -  ${remote_path} > eda2tv.out 2>&1 &
+echo "nohup eda2tv_convert_loop.sh ${freq_ch} 1 0 $eda2tv_inttime 4096 ${station} 1 $imsize \"-a $n_avg\" ${do_png_rate} 0 ${publish} - -1  ${remote_path} > eda2tv.out 2>&1 &"   
+nohup eda2tv_convert_loop.sh ${freq_ch} 1 0 $eda2tv_inttime 4096 ${station} 1 $imsize "-a $n_avg" ${do_png_rate} 0 ${publish} - -1  ${remote_path} > eda2tv.out 2>&1 &
 
 echo "sleep 5"   
 sleep 5
