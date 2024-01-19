@@ -181,9 +181,13 @@ if __name__ == '__main__':
                   print("WARNING : could not remove keyword = %s" % (keyword))
             
             
-            if removed : 
-               data2=image_data[0,0].copy()
-               hdu_list[0].data=data2
+            if removed :
+               print("INFO : keywords removed, data dimension = %d" % (image_data.ndim))            
+               if image_data.ndim>=4 :                  
+                  data2=image_data[0,0].copy()
+                  hdu_list[0].data=data2
+               else :   
+                  print("INFO : keywords removed, but data dimension = %d -> no need to copy()")
 
             wcs = WCS( hdu_list[0].header )
             dim = wcs.naxis
