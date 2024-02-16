@@ -28,7 +28,9 @@ function refreshIt() {
 
 <body onLoad=" setTimeout('refreshIt()',5000)">
 
-<img src="sky.png" name="edasky">
+<!-- sky.png PNG 5000x1500 5000x1500+0+0 8-bit sRGB 301527B 0.000u 0:00.000 -->
+<!-- using half of the image sizes below -->
+<img src="sky.png" name="edasky" width=2500 height=750>
 
 <CENTER>
 <H1>Movie since the start of the observations at FM band frequency = FREQ_VALUE_MHZ MHz</H1>
