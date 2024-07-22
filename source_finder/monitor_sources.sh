@@ -20,41 +20,66 @@ find . -maxdepth 1 -name "chan*_I_diff.fits" | awk '{gsub("./","");print $0;}' |
 # echo "monitor_source_radec.sh 293.750 21.90 sgr1935+2154 fits_list_I \"--use_weighting\""
 # monitor_source_radec.sh 293.750 21.90 sgr1935+2154 fits_list_I "--use_weighting"
 
-echo "monitor_source_and_ref_radec.sh 293.750 21.90 sgr1935+2154 - 1"
-monitor_source_and_ref_radec.sh 293.750 21.90 sgr1935+2154 - 1 
+if [[ -s radio_sources.txt || -s ~/github/eda2tv/source_finder/radio_sources.txt ]]; then
+   if [[ ! -s radio_sources.txt ]]; then
+      echo "cp ~/github/eda2tv/source_finder/radio_sources.txt ."
+      cp ~/github/eda2tv/source_finder/radio_sources.txt .
+   fi
 
-echo "monitor_source_radec.sh 148.28875 7.92638889 B0950+08_diff fits_list_I_diff"
-monitor_source_radec.sh 148.28875 7.92638889 B0950+08_diff fits_list_I_diff 
+   echo "INFO : using local file radio_sources.txt to monitor radio sources:"
+   cat radio_sources.txt
+   
+   while read line    
+   do
+      name=`echo $line | awk '{print $1;}'`
+      ra_deg=`echo $line | awk '{print $2;}'`
+      dec_deg=`echo $line | awk '{print $3;}'`
 
-echo "monitor_source_radec.sh 148.28875 7.92638889 B0950+08 fits_list_I \"--use_weighting\""
-monitor_source_radec.sh 148.28875 7.92638889 B0950+08 fits_list_I "--use_weighting"
+      echo "Monitoring source $name at ($ra_deg,$dec_deg) [deg] and slightly OFF position:"
 
-# X and Y also to be able to beam correct 
-echo "monitor_source_radec.sh 148.28875 7.92638889 B0950+08_XX  fits_list_XX \"--use_weighting\""
-monitor_source_radec.sh 148.28875 7.92638889 B0950+08_XX  fits_list_XX "--use_weighting"
+      echo "monitor_source_and_ref_radec.sh ${ra_deg} ${dec_deg} ${name} - 1"
+      monitor_source_and_ref_radec.sh ${ra_deg} ${dec_deg} ${name} - 1
+   done < radio_sources.txt
+else
+   echo "WARNING : monitoring default list of sources"
 
-echo "monitor_source_radec.sh 148.28875 7.92638889 B0950+08_YY  fits_list_YY \"--use_weighting\""
-monitor_source_radec.sh 148.28875 7.92638889 B0950+08_YY  fits_list_YY "--use_weighting"
+   echo "monitor_source_and_ref_radec.sh 293.750 21.90 sgr1935+2154 - 1"
+   monitor_source_and_ref_radec.sh 293.750 21.90 sgr1935+2154 - 1 
 
-echo "monitor_source_radec.sh 139.571 -12.1789 2C806_diff fits_list_I_diff"
-monitor_source_radec.sh 139.571 -12.1789 2C806_diff fits_list_I_diff
+   echo "monitor_source_radec.sh 148.28875 7.92638889 B0950+08_diff fits_list_I_diff"
+   monitor_source_radec.sh 148.28875 7.92638889 B0950+08_diff fits_list_I_diff 
 
-echo "monitor_source_radec.sh 139.571 -12.1789 2C806 fits_list_I \"--use_weighting\""
-monitor_source_radec.sh 139.571 -12.1789 2C806 fits_list_I "--use_weighting"
+   echo "monitor_source_radec.sh 148.28875 7.92638889 B0950+08 fits_list_I \"--use_weighting\""
+   monitor_source_radec.sh 148.28875 7.92638889 B0950+08 fits_list_I "--use_weighting"
 
-# control lightcurve of an empty patch of the sky as a sanity check and for RMS estimates :
-echo "monitor_source_radec.sh 155.075 16.87666667 OFF_B0950+08  fits_list_I \"--use_weighting\""
-monitor_source_radec.sh 155.075 16.87666667 OFF_B0950+08  fits_list_I "--use_weighting"
+   # X and Y also to be able to beam correct 
+   echo "monitor_source_radec.sh 148.28875 7.92638889 B0950+08_XX  fits_list_XX \"--use_weighting\""
+   monitor_source_radec.sh 148.28875 7.92638889 B0950+08_XX  fits_list_XX "--use_weighting"
 
-echo "monitor_source_radec.sh 155.075 16.87666667 OFF_B0950+08_diff  fits_list_I_diff"
-monitor_source_radec.sh 155.075 16.87666667 OFF_B0950+08_diff  fits_list_I_diff
+   echo "monitor_source_radec.sh 148.28875 7.92638889 B0950+08_YY  fits_list_YY \"--use_weighting\""
+   monitor_source_radec.sh 148.28875 7.92638889 B0950+08_YY  fits_list_YY "--use_weighting"
 
-# Crab pulsar :
-echo "monitor_source_radec.sh 83.6334000 22.01444444 B0531+21_diff fits_list_I_diff"
-monitor_source_radec.sh 83.6334000 22.01444444 B0531+21_diff fits_list_I_diff
+   echo "monitor_source_radec.sh 139.571 -12.1789 2C806_diff fits_list_I_diff"
+   monitor_source_radec.sh 139.571 -12.1789 2C806_diff fits_list_I_diff
 
-echo "monitor_source_radec.sh 93.6334000 32.01444444 OFF_B0531+21_diff fits_list_I_diff"
-monitor_source_radec.sh 93.6334000 32.01444444 OFF_B0531+21_diff fits_list_I_diff
+   echo "monitor_source_radec.sh 139.571 -12.1789 2C806 fits_list_I \"--use_weighting\""
+   monitor_source_radec.sh 139.571 -12.1789 2C806 fits_list_I "--use_weighting"
+
+   # control lightcurve of an empty patch of the sky as a sanity check and for RMS estimates :
+   echo "monitor_source_radec.sh 155.075 16.87666667 OFF_B0950+08  fits_list_I \"--use_weighting\""
+   monitor_source_radec.sh 155.075 16.87666667 OFF_B0950+08  fits_list_I "--use_weighting"
+
+   echo "monitor_source_radec.sh 155.075 16.87666667 OFF_B0950+08_diff  fits_list_I_diff"
+   monitor_source_radec.sh 155.075 16.87666667 OFF_B0950+08_diff  fits_list_I_diff
+
+   # Crab pulsar :
+   echo "monitor_source_radec.sh 83.6334000 22.01444444 B0531+21_diff fits_list_I_diff"
+   monitor_source_radec.sh 83.6334000 22.01444444 B0531+21_diff fits_list_I_diff
+
+   echo "monitor_source_radec.sh 93.6334000 32.01444444 OFF_B0531+21_diff fits_list_I_diff"
+   monitor_source_radec.sh 93.6334000 32.01444444 OFF_B0531+21_diff fits_list_I_diff
+fi
+
 
 echo "rm -f fits_list_I_tmp"
 rm -f fits_list_I_tmp
