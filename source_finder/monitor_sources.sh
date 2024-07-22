@@ -30,15 +30,27 @@ if [[ -s radio_sources.txt || -s ~/github/eda2tv/source_finder/radio_sources.txt
    cat radio_sources.txt
    
    while read line    
-   do
+   do      
       name=`echo $line | awk '{print $1;}'`
-      ra_deg=`echo $line | awk '{print $2;}'`
-      dec_deg=`echo $line | awk '{print $3;}'`
+      
+      if [[ $name != "#" ]]; then
+         ra_deg=`echo $line | awk '{print $2;}'`
+         dec_deg=`echo $line | awk '{print $3;}'`
+         fits_list=`echo $line | awk '{print $4;}'`
+         reference=`echo $line | awk '{print $5;}'`
 
-      echo "Monitoring source $name at ($ra_deg,$dec_deg) [deg] and slightly OFF position:"
+         echo "Monitoring source $name at ($ra_deg,$dec_deg) [deg] and slightly OFF position:"
 
-      echo "monitor_source_and_ref_radec.sh ${ra_deg} ${dec_deg} ${name} - 1"
-      monitor_source_and_ref_radec.sh ${ra_deg} ${dec_deg} ${name} - 1
+         if [[ $reference -gt 0 ]]; then
+            echo "monitor_source_and_ref_radec.sh ${ra_deg} ${dec_deg} ${name} - 1"
+            monitor_source_and_ref_radec.sh ${ra_deg} ${dec_deg} ${name} - 1
+         else
+            echo "monitor_source_radec.sh ${ra_deg} ${dec_deg} ${name} ${fits_list} \"--use_weighting\""
+            monitor_source_radec.sh ${ra_deg} ${dec_deg} ${name} ${fits_list} "--use_weighting"
+         fi
+      else
+         echo "DEBUG : comment line |$line| skipped"
+      echo 
    done < radio_sources.txt
 else
    echo "WARNING : monitoring default list of sources"
