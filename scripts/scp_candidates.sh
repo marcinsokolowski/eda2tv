@@ -1,6 +1,11 @@
 #!/bin/bash
 
-rsync -avP eda2:/data/2024_07_29_ch294_corr/merged/*_I_diff_cand.??? .
+dataset=2024_07_29_ch294_corr
+if [[ -n "$1" && "$1" != "-" ]]; then
+   dataset="$1"
+fi
+
+rsync -avP eda2:/data/${dataset}/merged/*_I_diff_cand.??? .
 
 mkdir -p images/
 for regfile in `ls *_I_diff_cand.reg`
@@ -9,8 +14,8 @@ do
    pngfile=${regfile%%reg}png
    txtfile=${regfile%%reg}txt
 
-   echo "rsync -avP eda2:/data/2024_07_29_ch294_corr/merged/${fits} ."
-   rsync -avP eda2:/data/2024_07_29_ch294_corr/merged/${fits} .
+   echo "rsync -avP eda2:/data/${dataset}/merged/${fits} ."
+   rsync -avP eda2:/data/${dataset}/merged/${fits} .
 
    echo "Candidate:"
    cat $txtfile
