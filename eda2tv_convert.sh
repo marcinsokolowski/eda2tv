@@ -91,6 +91,15 @@ if [[ -n "${15}" && "${15}" != "-" ]]; then
    remote_path="${15}"
 fi
 
+do_merge=1
+if [[ -n "${16}" && "${16}" != "-" ]]; then
+   do_merge=${16}
+fi
+
+merged_dir="merged/"
+if [[ -n "${17}" && "${17}" != "-" ]]; then
+   merged_dir="${17}"
+fi
 
 echo "##################################"
 echo "PARAMETERS:"
@@ -101,6 +110,8 @@ echo "publish = $publish"
 echo "process_last_hdf5_file = $process_last_hdf5_file"
 echo "max_calibration_age_in_seconds = $max_calibration_age_in_seconds"
 echo "remote_path = $remote_path"
+echo "do_merge = $do_merge"
+echp "merged_dir = $merged_dir"
 echo "##################################"
 
 
@@ -114,13 +125,17 @@ pwd
 mkdir -p merged/
 
 if [[ $voltages -gt 0 ]]; then
-   echo "merge_last_hdf5_file.sh 1 0"
-   merge_last_hdf5_file.sh 1 0
-   echo "merge finished at:"
-   date
+   if [[ $do_merge -gt 0 ]]; then
+      echo "merge_last_hdf5_file.sh 1 0"
+      merge_last_hdf5_file.sh 1 0
+      echo "merge finished at:"
+      date
+   else
+      echo "INFO : merging HDF5 files not required"
+   fi
 
    # use diff to get a list of newly merged HDF5 files :
-   cd merged
+   cd ${merged_dir}
 
    # update a list of merged HDF5 files :
 # WARNING : for now assuming not so many HDF5 files will be produced :   
@@ -162,7 +177,7 @@ else
          echo "Last correlated file = $last_corr_file"
 
          # TODO - change for making a copy of the last 30 seconds (see my plan)   
-         cd merged/
+         cd ${merged_dir}/
 
 
          if [[ $process_last_hdf5_file -gt 0 ]]; then
@@ -208,7 +223,7 @@ else
       echo "Last correlated file = $last_corr_file"
 
       # TODO - change for making a copy of the last 30 seconds (see my plan)   
-      cd merged/
+      cd ${merged_dir}/
    
       echo "INFO : using new / experimental mode to image last 30 seconds of the correlated HDF5 file"
       rsync -avP ../$last_corr_file latest_hdf5_file.hdf5
